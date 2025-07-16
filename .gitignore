@@ -40,3 +40,10 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# -----------------------------------------------------------------------------
+# Lockfiles (optional – not recommended for apps, but if you choose to ignore)
+# -----------------------------------------------------------------------------
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
