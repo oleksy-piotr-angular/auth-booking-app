@@ -4,10 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "start:host-app": "ng serve host-auth-app",
+    "start:auth-host-app": "ng serve auth-host-app",
     "start:details-mfe": "ng serve details-mfe",
     "start:search-mfe": "ng serve search-mfe",
-    "start:mf-all": "concurrently \"npm run start:host-app\" \"npm run start:details-mfe\" \"npm run start:search-mfe\"",
+    "start:mf-all": "concurrently \"npm run start:auth-host-app\" \"npm run start:details-mfe\" \"npm run start:search-mfe\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
