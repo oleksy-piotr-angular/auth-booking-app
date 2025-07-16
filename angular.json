@@ -17,6 +17,9 @@
         "build": {
           "builder": "ngx-build-plus:browser",
           "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "outputPath": "dist/auth-host-app",
             "index": "projects/auth-host-app/src/index.html",
             "polyfills": ["zone.js"],
@@ -118,6 +121,9 @@
         "build": {
           "builder": "ngx-build-plus:browser",
           "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "outputPath": "dist/search-mfe",
             "index": "projects/search-mfe/src/index.html",
             "polyfills": ["zone.js"],
@@ -219,6 +225,9 @@
         "build": {
           "builder": "ngx-build-plus:browser",
           "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "outputPath": "dist/details-mfe",
             "index": "projects/details-mfe/src/index.html",
             "polyfills": ["zone.js"],
