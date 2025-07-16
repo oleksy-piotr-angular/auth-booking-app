@@ -26,7 +26,10 @@
               "projects/auth-host-app/src/favicon.ico",
               "projects/auth-host-app/src/assets"
             ],
-            "styles": ["projects/auth-host-app/src/styles.scss"],
+            "styles": [
+              "projects/auth-host-app/src/styles.scss",
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
             "scripts": [],
             "main": "projects/auth-host-app/src/main.ts",
             "extraWebpackConfig": "projects/auth-host-app/webpack.config.js",
@@ -92,7 +95,10 @@
               "projects/auth-host-app/src/favicon.ico",
               "projects/auth-host-app/src/assets"
             ],
-            "styles": ["projects/auth-host-app/src/styles.scss"],
+            "styles": [
+              "projects/auth-host-app/src/styles.scss",
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
             "scripts": []
           }
         }
@@ -121,7 +127,10 @@
               "projects/search-mfe/src/favicon.ico",
               "projects/search-mfe/src/assets"
             ],
-            "styles": ["projects/search-mfe/src/styles.scss"],
+            "styles": [
+              "projects/search-mfe/src/styles.scss",
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
             "scripts": [],
             "main": "projects/search-mfe/src/main.ts",
             "extraWebpackConfig": "projects/search-mfe/webpack.config.js",
@@ -187,7 +196,10 @@
               "projects/search-mfe/src/favicon.ico",
               "projects/search-mfe/src/assets"
             ],
-            "styles": ["projects/search-mfe/src/styles.scss"],
+            "styles": [
+              "projects/search-mfe/src/styles.scss",
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
             "scripts": []
           }
         }
@@ -216,7 +228,10 @@
               "projects/details-mfe/src/favicon.ico",
               "projects/details-mfe/src/assets"
             ],
-            "styles": ["projects/details-mfe/src/styles.scss"],
+            "styles": [
+              "projects/details-mfe/src/styles.scss",
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
             "scripts": [],
             "main": "projects/details-mfe/src/main.ts",
             "extraWebpackConfig": "projects/details-mfe/webpack.config.js",
@@ -282,7 +297,10 @@
               "projects/details-mfe/src/favicon.ico",
               "projects/details-mfe/src/assets"
             ],
-            "styles": ["projects/details-mfe/src/styles.scss"],
+            "styles": [
+              "projects/details-mfe/src/styles.scss",
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
             "scripts": []
           }
         }
