@@ -1,0 +1,34 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "piotr@example.com",
+      "password": "secret123",
+      "name": "Piotr"
+    },
+    {
+      "id": 2,
+      "email": "admin@example.com",
+      "password": "admin123",
+      "name": "Admin"
+    },
+    {
+      "id": 3,
+      "email": "user1@example.com",
+      "password": "supersecret",
+      "name": "Alice Tester"
+    }
+  ],
+  "listings": [
+    {
+      "id": 1,
+      "title": "Seaside Cottage",
+      "price": 220
+    },
+    {
+      "id": 2,
+      "title": "Mountain Cabin",
+      "price": 180
+    }
+  ]
+}
