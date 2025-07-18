@@ -1,13 +1,24 @@
-// jwt.util.ts
+// projects/auth-host-app/src/app/shared/utils/jwt.util.ts
+
 export function isTokenExpired(token: string): boolean {
   try {
-    const [, payload] = token.split('.');
-    const decoded = JSON.parse(atob(payload));
-    if (!decoded.exp) return true;
+    const parts = token.split('.');
+    // malformed if not three segments
+    if (parts.length !== 3) {
+      return true;
+    }
+
+    const payload = JSON.parse(atob(parts[1]));
+
+    // missing or invalid exp → treat as expired
+    if (typeof payload.exp !== 'number') {
+      return true;
+    }
 
     const now = Math.floor(Date.now() / 1000);
-    return decoded.exp < now;
+    return payload.exp < now;
   } catch {
+    // any parse error → expire
     return true;
   }
 }
