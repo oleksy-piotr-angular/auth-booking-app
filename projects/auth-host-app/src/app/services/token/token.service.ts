@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TokenService {
-
-  constructor() { }
+  setToken(token: string): void {}
+  getToken(): string | null {
+    return null;
+  }
+  clearToken(): void {}
 }
