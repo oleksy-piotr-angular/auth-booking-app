@@ -9,6 +9,7 @@ import {
 } from 'projects/auth-host-app/testing/test-helpers';
 import { Router } from '@angular/router';
 import { TokenService } from '../../services/token/token.service';
+import { runInInjectionContext } from '@angular/core';
 
 describe('authGuard (fn)', () => {
   let routerSpy: jasmine.SpyObj<Router>;
@@ -29,9 +30,11 @@ describe('authGuard (fn)', () => {
   it('redirects to /login when NOT authenticated', fakeAsync(() => {
     tokenSpy.getToken.and.returnValue(null);
 
-    const result = authGuard(null as any, null as any);
-    tick();
+    const result = runInInjectionContext(TestBed, () =>
+      authGuard(null as any, null as any)
+    );
 
+    tick();
     expect(result).toBeFalse();
     expect(routerSpy.navigate).toHaveBeenCalledWith(['login']);
   }));
@@ -39,9 +42,11 @@ describe('authGuard (fn)', () => {
   it('allows activation when authenticated', fakeAsync(() => {
     tokenSpy.getToken.and.returnValue('token.abc');
 
-    const result = authGuard(null as any, null as any);
-    tick();
+    const result = runInInjectionContext(TestBed, () =>
+      authGuard(null as any, null as any)
+    );
 
+    tick();
     expect(result).toBeTrue();
     expect(routerSpy.navigate).not.toHaveBeenCalled();
   }));
