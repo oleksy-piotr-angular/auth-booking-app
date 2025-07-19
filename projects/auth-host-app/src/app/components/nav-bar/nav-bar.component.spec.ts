@@ -3,32 +3,25 @@
 import { TestBed, ComponentFixture } from '@angular/core/testing';
 import { Directive, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NavBarComponent } from './nav-bar.component';
-import { TokenService } from '../../services/token/token.service';
-import { Router } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { NavBarComponent } from './nav-bar.component';
+import { TokenService } from '../../services/token/token.service';
+import { Router, ActivatedRoute, convertToParamMap } from '@angular/router';
 import { SharedMaterialModule } from '@booking-app/shared-material';
 
-// ── Stub out routerLink and routerLinkActive as no-ops ───────────────────────
-@Directive({
-  selector: '[routerLink]',
-  standalone: true,
-})
+//── Stub out routerLink & routerLinkActive ───────────────────────────────────
+@Directive({ selector: '[routerLink]', standalone: true })
 class RouterLinkStubDirective {
   @Input('routerLink') linkParams: any;
 }
 
-@Directive({
-  selector: '[routerLinkActive]',
-  standalone: true,
-})
+@Directive({ selector: '[routerLinkActive]', standalone: true })
 class RouterLinkActiveStubDirective {
   @Input('routerLinkActive') activeOptions: any;
 }
 
-// ── Minimal ActivatedRoute stub ─────────────────────────────────────────────
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+// minimal ActivatedRoute stub
 const activatedRouteStub = {
   snapshot: {
     url: [],
@@ -41,18 +34,15 @@ const activatedRouteStub = {
   pathFromRoot: [],
 } as unknown as ActivatedRoute;
 
-// ── The tests ────────────────────────────────────────────────────────────────
 describe('NavBarComponent', () => {
   let fixture: ComponentFixture<NavBarComponent>;
   let tokenSpy: jasmine.SpyObj<TokenService>;
   let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
-    // create spies
     tokenSpy = jasmine.createSpyObj('TokenService', ['getToken', 'clearToken']);
     routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
-    // override NavBarComponent to use our stub directives instead of actual router ones
     TestBed.overrideComponent(NavBarComponent, {
       set: {
         imports: [
@@ -64,7 +54,6 @@ describe('NavBarComponent', () => {
       },
     });
 
-    // configure the test bed
     TestBed.configureTestingModule({
       imports: [NavBarComponent, NoopAnimationsModule],
       providers: [
@@ -77,40 +66,51 @@ describe('NavBarComponent', () => {
     fixture = TestBed.createComponent(NavBarComponent);
   });
 
-  it(`should have the 'auth-host-app' title`, () => {
-    const fixture = TestBed.createComponent(NavBarComponent);
-    const navBar = fixture.componentInstance;
-    expect(navBar.title).toEqual('auth-host-app');
-  });
-
-  it('shows Login/Register when NOT authenticated', () => {
+  it('should show Login & Register with correct icons for guests', () => {
     tokenSpy.getToken.and.returnValue(null);
     fixture.detectChanges();
 
-    const buttons = fixture.debugElement.queryAll(By.css('button'));
-    const labels = buttons.map((b) => b.nativeElement.textContent.trim());
-    expect(labels).toContain('Login');
-    expect(labels).toContain('Register');
-    expect(labels).not.toContain('Profile');
+    const links = fixture.debugElement
+      .queryAll(By.directive(RouterLinkStubDirective))
+      .map((de) => de.injector.get(RouterLinkStubDirective).linkParams);
+    expect(links).toEqual(
+      jasmine.arrayWithExactContents(['login', 'register'])
+    );
+
+    const icons = fixture.debugElement
+      .queryAll(By.css('mat-icon'))
+      .map((de) => de.nativeElement.textContent.trim());
+    expect(icons).toEqual(
+      jasmine.arrayWithExactContents(['login', 'person_add'])
+    );
   });
 
-  it('shows Profile/Logout when authenticated', () => {
+  it('should show Profile, Details, Search & Logout icons when authenticated', () => {
     tokenSpy.getToken.and.returnValue('token.123');
     fixture.detectChanges();
 
-    const buttons = fixture.debugElement.queryAll(By.css('button'));
-    const labels = buttons.map((b) => b.nativeElement.textContent.trim());
-    expect(labels).toContain('Profile');
-    expect(labels).toContain('Logout');
+    // verify routerLink inputs
+    const links = fixture.debugElement
+      .queryAll(By.directive(RouterLinkStubDirective))
+      .map((de) => de.injector.get(RouterLinkStubDirective).linkParams);
+    expect(links).toEqual(jasmine.arrayContaining(['profile', 'search-mfe']));
+
+    // verify icons: person, search, logout
+    const icons = fixture.debugElement
+      .queryAll(By.css('mat-icon'))
+      .map((de) => de.nativeElement.textContent.trim());
+    expect(icons).toEqual(
+      jasmine.arrayContaining(['person', 'search', 'logout'])
+    );
   });
 
-  it('clears token and navigates to login on logout', () => {
+  it('should clear token and navigate to login on Logout click', () => {
     tokenSpy.getToken.and.returnValue('token.123');
     fixture.detectChanges();
 
     const logoutBtn = fixture.debugElement
       .queryAll(By.css('button'))
-      .find((b) => b.nativeElement.textContent.trim() === 'Logout')!;
+      .find((b) => b.nativeElement.textContent.trim().includes('Logout'))!;
     logoutBtn.triggerEventHandler('click', null);
 
     expect(tokenSpy.clearToken).toHaveBeenCalled();
