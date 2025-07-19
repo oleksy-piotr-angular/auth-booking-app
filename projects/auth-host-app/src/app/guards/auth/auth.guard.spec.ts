@@ -1,9 +1,13 @@
-// projects/auth-host-app/src/app/guards/auth.guard.spec.ts
-
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { Router } from '@angular/router';
-
 import { authGuard } from './auth.guard';
+
+import {
+  createRouterSpy,
+  provideMockRouter,
+  createTokenServiceSpy,
+  provideMockAuthService,
+} from 'projects/auth-host-app/testing/test-helpers';
+import { Router } from '@angular/router';
 import { TokenService } from '../../services/token/token.service';
 
 describe('authGuard (fn)', () => {
@@ -11,13 +15,13 @@ describe('authGuard (fn)', () => {
   let tokenSpy: jasmine.SpyObj<TokenService>;
 
   beforeEach(() => {
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-    tokenSpy = jasmine.createSpyObj('TokenService', ['getToken']);
+    routerSpy = createRouterSpy();
+    tokenSpy = createTokenServiceSpy();
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: Router, useValue: routerSpy },
-        { provide: TokenService, useValue: tokenSpy },
+        provideMockRouter(routerSpy),
+        provideMockAuthService(tokenSpy),
       ],
     });
   });
