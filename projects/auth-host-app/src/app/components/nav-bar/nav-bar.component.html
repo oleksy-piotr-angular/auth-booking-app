@@ -1,1 +1,19 @@
-<p>nav-bar works!</p>
+<mat-toolbar color="primary">
+  <button mat-button routerLink="/" routerLinkActive="active">Home</button>
+
+  <ng-container *ngIf="!isAuthenticated; else loggedIn">
+    <button mat-button routerLink="login" routerLinkActive="active">
+      Login
+    </button>
+    <button mat-button routerLink="register" routerLinkActive="active">
+      Register
+    </button>
+  </ng-container>
+
+  <ng-template #loggedIn>
+    <button mat-button routerLink="profile" routerLinkActive="active">
+      Profile
+    </button>
+    <button mat-button (click)="logout()">Logout</button>
+  </ng-template>
+</mat-toolbar>
