@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-inline-errors',
@@ -6,4 +7,7 @@ import { Component } from '@angular/core';
   imports: [],
   template: ``,
 })
-export class InlineErrorsComponent {}
+export class InlineErrorsComponent {
+  public control: FormControl<string | null> = new FormControl(null);
+  public errorMessages: { [key: string]: string } = {};
+}
