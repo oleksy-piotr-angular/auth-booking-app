@@ -1,19 +1,22 @@
 <mat-toolbar color="primary">
-  <button mat-button routerLink="/" routerLinkActive="active">Home</button>
-
   <ng-container *ngIf="!isAuthenticated; else loggedIn">
     <button mat-button routerLink="login" routerLinkActive="active">
-      Login
+      <mat-icon>login</mat-icon> Login
     </button>
     <button mat-button routerLink="register" routerLinkActive="active">
-      Register
+      <mat-icon>person_add</mat-icon> Register
     </button>
   </ng-container>
 
   <ng-template #loggedIn>
     <button mat-button routerLink="profile" routerLinkActive="active">
-      Profile
+      <mat-icon>person</mat-icon> Profile
     </button>
-    <button mat-button (click)="logout()">Logout</button>
+    <button mat-button routerLink="search-mfe" routerLinkActive="active">
+      <mat-icon>search</mat-icon> Search
+    </button>
+    <button mat-button (click)="logout()">
+      <mat-icon>logout</mat-icon> Logout
+    </button>
   </ng-template>
 </mat-toolbar>
