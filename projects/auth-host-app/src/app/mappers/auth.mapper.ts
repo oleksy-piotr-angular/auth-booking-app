@@ -1,4 +1,5 @@
-// auth.mapper.ts
+// projects/auth-host-app/src/app/mappers/auth.mapper.ts
+
 import { LoginResponseDto, RegisterResponseDto } from '../dtos/auth.dto';
 import { LoginData, RegisterData } from '../models/auth.model';
 
