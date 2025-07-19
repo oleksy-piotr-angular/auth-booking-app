@@ -5,8 +5,10 @@ import { RouterOutlet } from '@angular/router';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  template: `
+    <h1>{{ title }}</h1>
+    <router-outlet />
+`,
 })
 export class AppComponent {
   title = 'auth-host-app';
