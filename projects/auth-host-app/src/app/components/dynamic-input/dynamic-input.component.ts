@@ -4,13 +4,12 @@ import { Component } from '@angular/core';
   selector: 'app-dynamic-input',
   standalone: true,
   imports: [],
-  template: `
-    <p>
-      dynamic-input works!
-    </p>
-  `,
-  styles: ``
+  template: ` <p>dynamic-input works!</p> `,
+  styles: ``,
 })
 export class DynamicInputComponent {
-
+  control: any;
+  label?: string;
+  placeholder?: string;
+  type?: string;
 }
