@@ -80,12 +80,20 @@ describe('DynamicInputComponent', () => {
   });
 
   it('should apply material error state when control invalid and touched', () => {
+    // 1) Setup a required validator and trigger an error
     control.setValidators([(v) => (v.value ? null : { required: true })]);
     control.setValue('');
     control.markAsTouched();
+    component.errorMessages = { required: 'Required!' };
     fixture.detectChanges();
 
-    const formField = fixture.debugElement.query(By.css('mat-form-field'));
-    expect(formField.componentInstance.ngControl.invalid).toBeTrue();
+    // 2) Material adds this class when the control is invalid + touched
+    const formFieldDE = fixture.debugElement.query(By.css('mat-form-field'));
+    expect(formFieldDE.classes['mat-form-field-invalid']).toBeTrue();
+
+    // 3) And our InlineErrorsComponent should render the mat-error
+    const errorEl = fixture.debugElement.query(By.css('mat-error'));
+    expect(errorEl).toBeTruthy();
+    expect(errorEl.nativeElement.textContent.trim()).toBe('Required!');
   });
 });
