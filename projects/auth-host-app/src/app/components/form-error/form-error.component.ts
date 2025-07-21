@@ -6,4 +6,7 @@ import { Component } from '@angular/core';
   imports: [],
   template: ``,
 })
-export class FormErrorComponent {}
+export class FormErrorComponent {
+  message: null | string = null;
+  messages: undefined | string[] = undefined;
+}
