@@ -23,6 +23,12 @@ import { LoginPayload } from '../../dtos/auth.dto';
 import { AuthService } from '../../services/auth/auth.service';
 import { DynamicFormComponent } from '../../components/dynamic-form/dynamic-form.component';
 import { FormErrorComponent } from '../../components/form-error/form-error.component';
+import {
+  createAuthServiceSpy,
+  createRouterSpy,
+  provideMockAuthService,
+  provideMockRouter,
+} from 'projects/auth-host-app/testing/test-helpers';
 
 describe('LoginComponent (TDD)', () => {
   let fixture: ComponentFixture<LoginComponent>;
@@ -31,8 +37,8 @@ describe('LoginComponent (TDD)', () => {
   let routerSpy: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    authSpy = jasmine.createSpyObj('AuthService', ['login']);
-    routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    authSpy = createAuthServiceSpy();
+    routerSpy = createRouterSpy();
 
     await TestBed.configureTestingModule({
       // no RouterTestingModule here
@@ -44,10 +50,8 @@ describe('LoginComponent (TDD)', () => {
         NoopAnimationsModule,
       ],
       providers: [
-        // override the injected Router with our spy
-        { provide: Router, useValue: routerSpy },
-        // override AuthService with spy
-        { provide: AuthService, useValue: authSpy },
+        provideMockRouter(routerSpy),
+        provideMockAuthService(authSpy),
         // now provide a real router for DI & location fakes
         provideRouter([]),
         provideLocationMocks(),
