@@ -8,7 +8,7 @@ import {
   createRouterSpy,
   provideMockRouter,
   createTokenServiceSpy,
-  provideMockAuthService,
+  provideMockTokenService,
 } from 'projects/auth-host-app/testing/test-helpers';
 import { runInInjectionContext } from '@angular/core';
 
@@ -23,7 +23,7 @@ describe('unauthGuard (fn)', () => {
     TestBed.configureTestingModule({
       providers: [
         provideMockRouter(routerSpy),
-        provideMockAuthService(tokenSpy),
+        provideMockTokenService(tokenSpy),
       ],
     });
   });

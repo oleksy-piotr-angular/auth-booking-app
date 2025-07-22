@@ -5,7 +5,7 @@ import {
   createRouterSpy,
   provideMockRouter,
   createTokenServiceSpy,
-  provideMockAuthService,
+  provideMockTokenService,
 } from 'projects/auth-host-app/testing/test-helpers';
 import { Router } from '@angular/router';
 import { TokenService } from '../../services/token/token.service';
@@ -22,7 +22,7 @@ describe('authGuard (fn)', () => {
     TestBed.configureTestingModule({
       providers: [
         provideMockRouter(routerSpy),
-        provideMockAuthService(tokenSpy),
+        provideMockTokenService(tokenSpy),
       ],
     });
   });
