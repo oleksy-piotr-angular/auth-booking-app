@@ -1,1 +1,19 @@
-<p>dynamic-form works!</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <app-dynamic-input
+    *ngFor="let f of fields; trackBy: trackByName"
+    [control]="getControl(f.name)"
+    [label]="f.label"
+    [placeholder]="f.placeholder"
+    [type]="f.type ?? 'text'"
+    [errorMessages]="f.errorMessages || {}"
+  ></app-dynamic-input>
+
+  <button
+    mat-raised-button
+    color="primary"
+    type="submit"
+    [disabled]="form.invalid"
+  >
+    Submit
+  </button>
+</form>
