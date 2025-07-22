@@ -1,3 +1,4 @@
+//projects/auth-host-app/testing/test-helpers.ts
 import { Router } from '@angular/router';
 import { AuthService } from '../src/app/services/auth/auth.service';
 import { TokenService } from '../src/app/services/token/token.service';
@@ -14,7 +15,11 @@ export function provideMockRouter(routerSpy?: jasmine.SpyObj<Router>) {
 }
 
 export function createAuthServiceSpy() {
-  return jasmine.createSpyObj<AuthService>('AuthService', ['login']);
+  // now spies on both login() and register()
+  return jasmine.createSpyObj<AuthService>('AuthService', [
+    'login',
+    'register',
+  ]);
 }
 
 export function provideMockAuthService(authSpy?: jasmine.SpyObj<AuthService>) {
