@@ -1,6 +1,6 @@
 import { ValidatorFn } from '@angular/forms';
 
-export interface FieldConfig {
+export interface FormFieldConfig {
   name: string;
   label?: string;
   placeholder?: string;
