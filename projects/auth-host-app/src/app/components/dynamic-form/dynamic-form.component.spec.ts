@@ -8,6 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicFormComponent } from './dynamic-form.component';
 import { DynamicInputComponent } from '../dynamic-input/dynamic-input.component';
+import { InlineErrorsComponent } from '../inline-errors/inline-errors.component';
 import { FieldConfig } from '../../models/field-config.model';
 
 describe('DynamicFormComponent', () => {
@@ -20,7 +21,7 @@ describe('DynamicFormComponent', () => {
       label: 'Username',
       placeholder: 'Enter username',
       validators: [Validators.required],
-      errorMessages: { required: 'Required!' } as Record<string, string>,
+      errorMessages: { required: 'Required!' },
     },
     {
       name: 'password',
@@ -30,7 +31,7 @@ describe('DynamicFormComponent', () => {
       errorMessages: {
         required: 'Required!',
         minlength: 'Min 6 chars',
-      } as Record<string, string>,
+      },
     },
   ];
 
@@ -41,6 +42,7 @@ describe('DynamicFormComponent', () => {
         NoopAnimationsModule,
         MatButtonModule,
         DynamicInputComponent,
+        InlineErrorsComponent,
         DynamicFormComponent,
       ],
     }).compileComponents();
@@ -117,11 +119,88 @@ describe('DynamicFormComponent', () => {
       .map((de) => de.componentInstance as DynamicInputComponent);
 
     fields.forEach((f, i) => {
-      const expectedControl = <FormControl>component.form.get(f.name)!;
+      const expectedControl = component.form.get(f.name) as FormControl;
       const expectedMessages = f.errorMessages ?? {};
-
       expect(dynamicInputs[i].control).toBe(expectedControl);
       expect(dynamicInputs[i].errorMessages).toEqual(expectedMessages);
+    });
+  });
+
+  //
+  // Cross-field password confirmation tests
+  //
+
+  /** Extended config with confirmField for password match */
+  const confirmConfig: FieldConfig[] = [
+    ...fields,
+    {
+      name: 'confirmPassword',
+      label: 'Confirm Password',
+      type: 'password',
+      validators: [Validators.required],
+      errorMessages: {
+        required: 'Required!',
+        passwordMismatch: 'Passwords must match',
+      },
+      confirmField: 'password',
+    },
+  ];
+
+  describe('with confirmField on password', () => {
+    beforeEach(() => {
+      component.fields = confirmConfig;
+      component.ngOnInit(); // rebuild form with new config
+      fixture.detectChanges();
+    });
+
+    it('should disable submit and show mismatch error when passwords differ', () => {
+      component.form.get('password')!.setValue('foo123');
+      component.form.get('confirmPassword')!.setValue('bar456');
+      component.form.markAllAsTouched();
+      fixture.detectChanges();
+
+      // submit remains disabled
+      const btn = fixture.debugElement.query(By.css('button'))
+        .nativeElement as HTMLButtonElement;
+      expect(btn.disabled).toBeTrue();
+
+      // confirmPassword input has InlineErrorsComponent rendering mismatch message
+      const confirmDE = fixture.debugElement
+        .queryAll(By.directive(DynamicInputComponent))
+        .find(
+          (de) =>
+            de.componentInstance.control ===
+            component.form.get('confirmPassword')
+        )!;
+      const inlineDE = confirmDE.query(By.directive(InlineErrorsComponent));
+      expect(inlineDE).toBeTruthy();
+      expect(inlineDE.nativeElement.textContent).toContain(
+        'Passwords must match'
+      );
+    });
+
+    it('should enable submit and suppress error when passwords match', () => {
+      component.form.get('password')!.setValue('same123');
+      component.form.get('confirmPassword')!.setValue('same123');
+      component.form.markAllAsTouched();
+      fixture.detectChanges();
+
+      // submit becomes enabled
+      const btn = fixture.debugElement.query(By.css('button'))
+        .nativeElement as HTMLButtonElement;
+      expect(btn.disabled).toBeFalse();
+
+      // InlineErrorsComponent is present but shows no text
+      const confirmDE = fixture.debugElement
+        .queryAll(By.directive(DynamicInputComponent))
+        .find(
+          (de) =>
+            de.componentInstance.control ===
+            component.form.get('confirmPassword')
+        )!;
+      const inlineDE = confirmDE.query(By.directive(InlineErrorsComponent));
+      expect(inlineDE).toBeTruthy();
+      expect(inlineDE.nativeElement.textContent.trim()).toBe('');
     });
   });
 });
