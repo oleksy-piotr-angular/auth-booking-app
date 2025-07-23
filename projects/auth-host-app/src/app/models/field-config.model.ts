@@ -6,5 +6,6 @@ export interface FieldConfig {
   placeholder?: string;
   type?: string;
   validators?: ValidatorFn[];
-  errorMessages?: Record<string,string>;
+  errorMessages?: Record<string, string>;
+  confirmField?: string;
 }
