@@ -5,25 +5,23 @@ export function passwordsMatchValidator(
   passwordKey: string,
   confirmKey: string
 ): ValidatorFn {
-  return (group: AbstractControl): ValidationErrors | null => {
-    const pwCtrl = group.get(passwordKey);
-    const cpCtrl = group.get(confirmKey);
-    if (!pwCtrl || !cpCtrl) {
+  return (control: AbstractControl): ValidationErrors | null => {
+    // control is the confirm-password FormControl
+    const parent = control.parent;
+    if (!parent) {
+      // Not yet hooked into a FormGroup
       return null;
     }
-    const match = pwCtrl.value === cpCtrl.value;
-    // sync the confirm control’s errors
-    if (!match) {
-      const errs = cpCtrl.errors || {};
-      cpCtrl.setErrors({ ...errs, passwordMismatch: true });
-      return { passwordMismatch: true };
-    } else {
-      // remove only our passwordMismatch key
-      if (cpCtrl.hasError('passwordMismatch')) {
-        const { passwordMismatch, ...rest } = cpCtrl.errors!;
-        cpCtrl.setErrors(Object.keys(rest).length ? rest : null);
-      }
+
+    const passwordValue = parent.get(passwordKey)?.value;
+    const confirmValue = control.value;
+
+    // Skip when either is null, undefined, or empty string
+    if (!passwordValue || !confirmValue) {
       return null;
     }
+
+    // If they match, no error; otherwise flag mismatch
+    return passwordValue === confirmValue ? null : { passwordMismatch: true };
   };
 }
