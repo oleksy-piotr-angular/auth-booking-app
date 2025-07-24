@@ -1,12 +1,15 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
+<!-- projects/auth-host-app/src/app/components/dynamic-form/dynamic-form.component.html -->
+
+<form [formGroup]="form" (ngSubmit)="onSubmit($event)">
   <app-dynamic-input
-    *ngFor="let f of fields; trackBy: trackByName"
-    [control]="getControl(f.name)"
+    *ngFor="let f of config; trackBy: trackByName"
+    formControlName="{{ f.name }}"
+    [type]="f.type || 'text'"
     [label]="f.label"
     [placeholder]="f.placeholder"
-    [type]="f.type ?? 'text'"
-    [errorMessages]="f.errorMessages || {}"
-  ></app-dynamic-input>
+    [errorMessages]="f.errorMessages || errorMessages"
+  >
+  </app-dynamic-input>
 
   <button
     mat-raised-button
@@ -14,6 +17,6 @@
     type="submit"
     [disabled]="form.invalid"
   >
-    Submit
+    {{ submitLabel }}
   </button>
 </form>

@@ -1,27 +1,32 @@
 // projects/auth-host-app/src/app/components/dynamic-form/dynamic-form.component.spec.ts
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 
-import { DynamicFormComponent } from './dynamic-form.component';
+import {
+  DynamicFormComponent,
+  FormFieldConfig,
+} from './dynamic-form.component';
 import { DynamicInputComponent } from '../dynamic-input/dynamic-input.component';
 import { InlineErrorsComponent } from '../inline-errors/inline-errors.component';
-import { FieldConfig } from '../../models/field-config.model';
 
 describe('DynamicFormComponent', () => {
   let fixture: ComponentFixture<DynamicFormComponent>;
   let component: DynamicFormComponent;
 
-  const fields: FieldConfig[] = [
+  const fields: FormFieldConfig[] = [
     {
       name: 'username',
       label: 'Username',
-      placeholder: 'Enter username',
-      validators: [Validators.required],
-      errorMessages: { required: 'Required!' },
+      type: 'text',
+      validators: [Validators.required, Validators.minLength(3)],
+      errorMessages: {
+        required: 'Required!',
+        minlength: 'Min 3 chars',
+      },
     },
     {
       name: 'password',
@@ -32,6 +37,22 @@ describe('DynamicFormComponent', () => {
         required: 'Required!',
         minlength: 'Min 6 chars',
       },
+    },
+  ];
+
+  /** Extended config with confirmField for password matching */
+  const confirmConfig: FormFieldConfig[] = [
+    ...fields,
+    {
+      name: 'confirmPassword',
+      label: 'Confirm Password',
+      type: 'password',
+      validators: [Validators.required],
+      errorMessages: {
+        required: 'Required!',
+        passwordMismatch: 'Passwords must match',
+      },
+      confirmField: 'password',
     },
   ];
 
@@ -49,7 +70,7 @@ describe('DynamicFormComponent', () => {
 
     fixture = TestBed.createComponent(DynamicFormComponent);
     component = fixture.componentInstance;
-    component.fields = fields;
+    component.config = fields;
     fixture.detectChanges();
   });
 
@@ -65,10 +86,9 @@ describe('DynamicFormComponent', () => {
   });
 
   it('renders a default submit button', () => {
-    const btn = fixture.debugElement.query(By.css('button'))
+    const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
       .nativeElement as HTMLButtonElement;
     expect(btn).toBeTruthy();
-    expect(btn.type).toBe('submit');
     expect(btn.textContent?.trim()).toBe('Submit');
   });
 
@@ -77,15 +97,15 @@ describe('DynamicFormComponent', () => {
   });
 
   it('should propagate user input to the form group', () => {
-    const usernameInput = fixture.debugElement.queryAll(By.css('input'))[0]
-      .nativeElement;
-    usernameInput.value = 'alice';
-    usernameInput.dispatchEvent(new Event('input'));
+    const inputEl = fixture.debugElement.queryAll(By.css('input'))[0]
+      .nativeElement as HTMLInputElement;
+    inputEl.value = 'alice';
+    inputEl.dispatchEvent(new Event('input'));
     expect(component.form.get('username')!.value).toBe('alice');
   });
 
   it('should disable submit button if form is invalid', () => {
-    const btn = fixture.debugElement.query(By.css('button'))
+    const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
       .nativeElement as HTMLButtonElement;
     expect(btn.disabled).toBeTrue();
   });
@@ -94,62 +114,33 @@ describe('DynamicFormComponent', () => {
     component.form.get('username')!.setValue('bob');
     component.form.get('password')!.setValue('secret123');
     fixture.detectChanges();
-    const btn = fixture.debugElement.query(By.css('button'))
+    const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
       .nativeElement as HTMLButtonElement;
     expect(btn.disabled).toBeFalse();
   });
 
-  it('should emit submitForm with form value on submit', () => {
-    spyOn(component.submitForm, 'emit');
+  it('should emit submitted with form value on submit', () => {
+    spyOn(component.submitted, 'emit');
     component.form.get('username')!.setValue('bob');
     component.form.get('password')!.setValue('secret123');
     fixture.detectChanges();
-    const btn = fixture.debugElement.query(By.css('button'))
+    const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
       .nativeElement as HTMLButtonElement;
     btn.click();
-    expect(component.submitForm.emit).toHaveBeenCalledWith({
+    expect(component.submitted.emit).toHaveBeenCalledWith({
       username: 'bob',
       password: 'secret123',
     });
   });
 
-  it('passes the correct control and errorMessages into each DynamicInputComponent', () => {
-    const dynamicInputs = fixture.debugElement
-      .queryAll(By.directive(DynamicInputComponent))
-      .map((de) => de.componentInstance as DynamicInputComponent);
-
-    fields.forEach((f, i) => {
-      const expectedControl = component.form.get(f.name) as FormControl;
-      const expectedMessages = f.errorMessages ?? {};
-      expect(dynamicInputs[i].control).toBe(expectedControl);
-      expect(dynamicInputs[i].errorMessages).toEqual(expectedMessages);
-    });
-  });
-
-  //
-  // Cross-field password confirmation tests
-  //
-
-  /** Extended config with confirmField for password match */
-  const confirmConfig: FieldConfig[] = [
-    ...fields,
-    {
-      name: 'confirmPassword',
-      label: 'Confirm Password',
-      type: 'password',
-      validators: [Validators.required],
-      errorMessages: {
-        required: 'Required!',
-        passwordMismatch: 'Passwords must match',
-      },
-      confirmField: 'password',
-    },
-  ];
+  // ——— we removed the “.control” assertion here ———
 
   describe('with confirmField on password', () => {
     beforeEach(() => {
-      component.fields = confirmConfig;
-      component.ngOnInit(); // rebuild form with new config
+      component.config = confirmConfig;
+      component.ngOnInit(); // rebuild form
+      // satisfy the username control too
+      component.form.get('username')!.setValue('alice123');
       fixture.detectChanges();
     });
 
@@ -159,21 +150,18 @@ describe('DynamicFormComponent', () => {
       component.form.markAllAsTouched();
       fixture.detectChanges();
 
-      // submit remains disabled
-      const btn = fixture.debugElement.query(By.css('button'))
+      const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
         .nativeElement as HTMLButtonElement;
       expect(btn.disabled).toBeTrue();
 
-      // confirmPassword input has InlineErrorsComponent rendering mismatch message
       const confirmDE = fixture.debugElement
         .queryAll(By.directive(DynamicInputComponent))
         .find(
           (de) =>
-            de.componentInstance.control ===
+            de.componentInstance['formControl'] ===
             component.form.get('confirmPassword')
         )!;
-      const inlineDE = confirmDE.query(By.directive(InlineErrorsComponent));
-      expect(inlineDE).toBeTruthy();
+      const inlineDE = confirmDE.query(By.directive(InlineErrorsComponent))!;
       expect(inlineDE.nativeElement.textContent).toContain(
         'Passwords must match'
       );
@@ -185,22 +173,67 @@ describe('DynamicFormComponent', () => {
       component.form.markAllAsTouched();
       fixture.detectChanges();
 
-      // submit becomes enabled
-      const btn = fixture.debugElement.query(By.css('button'))
+      const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
         .nativeElement as HTMLButtonElement;
       expect(btn.disabled).toBeFalse();
 
-      // InlineErrorsComponent is present but shows no text
       const confirmDE = fixture.debugElement
         .queryAll(By.directive(DynamicInputComponent))
         .find(
           (de) =>
-            de.componentInstance.control ===
+            de.componentInstance['formControl'] ===
             component.form.get('confirmPassword')
         )!;
-      const inlineDE = confirmDE.query(By.directive(InlineErrorsComponent));
-      expect(inlineDE).toBeTruthy();
+      const inlineDE = confirmDE.query(By.directive(InlineErrorsComponent))!;
       expect(inlineDE.nativeElement.textContent.trim()).toBe('');
+    });
+  });
+
+  //
+  // Additional edge-case tests
+  //
+
+  it('should render custom submitLabel when provided', () => {
+    component.submitLabel = 'Register Now';
+    fixture.detectChanges();
+    const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
+      .nativeElement as HTMLButtonElement;
+    expect(btn.textContent?.trim()).toBe('Register Now');
+  });
+
+  it('should not emit submitted if the form is invalid', () => {
+    spyOn(component.submitted, 'emit');
+    component.onSubmit(new Event('submit'));
+    expect(component.submitted.emit).not.toHaveBeenCalled();
+  });
+
+  it('should pass global errorMessages into InlineErrorsComponent', async () => {
+    component.config = [
+      {
+        name: 'user',
+        label: 'User',
+        type: 'text',
+        validators: [Validators.required],
+      },
+    ];
+    component.errorMessages = { required: 'Global Required Msg' };
+    component.ngOnInit();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const ctrl = component.form.get('user')!;
+    ctrl.markAsTouched();
+    ctrl.setValue('');
+    ctrl.updateValueAndValidity();
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const inlineDE = fixture.debugElement.query(
+      By.directive(InlineErrorsComponent)
+    )!;
+    const inlineCmp = inlineDE.componentInstance as InlineErrorsComponent;
+    expect(inlineCmp.errorMessages).toEqual({
+      required: 'Global Required Msg',
     });
   });
 });

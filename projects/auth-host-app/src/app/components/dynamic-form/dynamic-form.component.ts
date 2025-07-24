@@ -1,12 +1,28 @@
-// projects/auth-host-app/src/app/components/dynamic-form/dynamic-form.component.ts
-
-import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicInputComponent } from '../dynamic-input/dynamic-input.component';
-import { FieldConfig } from '../../models/field-config.model';
+import { passwordsMatchValidator } from '../../shared/Validators/password-match/passwords-match.validator';
+
+export interface FormFieldConfig {
+  name: string;
+  type?: string;
+  label: string;
+  placeholder?: string;
+  validators?: any[];
+  errorMessages?: Record<string, string>;
+  confirmField?: string;
+}
 
 @Component({
   selector: 'app-dynamic-form',
@@ -20,33 +36,63 @@ import { FieldConfig } from '../../models/field-config.model';
   templateUrl: './dynamic-form.component.html',
   styleUrls: ['./dynamic-form.component.scss'],
 })
-export class DynamicFormComponent implements OnInit {
-  @Input() fields: FieldConfig[] = [];
-  @Output() submitForm = new EventEmitter<any>();
+export class DynamicFormComponent<T = any> implements OnInit, OnChanges {
+  @Input() config: FormFieldConfig[] = [];
+  @Input() errorMessages: Record<string, string> = {};
+  @Input() submitLabel = 'Submit';
 
-  public form: FormGroup = new FormGroup({});
+  @Output() submitted = new EventEmitter<T>();
 
-  ngOnInit() {
+  public form!: FormGroup;
+
+  constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
     this.buildForm();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['config'] && !changes['config'].firstChange) {
+      this.buildForm();
+    }
+  }
+
   private buildForm(): void {
-    const group: Record<string, FormControl> = {};
-    this.fields.forEach((f) => {
-      group[f.name] = new FormControl(null, f.validators ?? []);
+    const controls: Record<string, any> = {};
+
+    this.config.forEach((field) => {
+      controls[field.name] = [null, field.validators || []];
     });
-    this.form = new FormGroup(group);
+
+    this.form = this.fb.group(controls);
+
+    this.config.forEach((field) => {
+      if (field.confirmField) {
+        const pwdCtrl = this.form.get(field.confirmField)!;
+        const cpCtrl = this.form.get(field.name)!;
+
+        cpCtrl.setValidators([
+          ...(field.validators || []),
+          passwordsMatchValidator(field.confirmField, field.name),
+        ]);
+
+        cpCtrl.updateValueAndValidity();
+        pwdCtrl.valueChanges.subscribe(() => cpCtrl.updateValueAndValidity());
+      }
+    });
+
+    this.form.updateValueAndValidity();
   }
 
-  getControl(name: string): FormControl {
-    return this.form.get(name) as FormControl;
+  public onSubmit(event: Event): void {
+    event.preventDefault();
+    this.form.markAllAsTouched();
+    if (this.form.valid) {
+      this.submitted.emit(this.form.value as T);
+    }
   }
 
-  trackByName(_: number, f: FieldConfig) {
-    return f.name;
-  }
-
-  onSubmit(): void {
-    this.submitForm.emit(this.form.value);
+  public trackByName(_: number, field: FormFieldConfig): string {
+    return field.name;
   }
 }
