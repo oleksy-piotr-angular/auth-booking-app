@@ -13,16 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicInputComponent } from '../dynamic-input/dynamic-input.component';
 import { passwordsMatchValidator } from '../../shared/Validators/password-match/passwords-match.validator';
-
-export interface FormFieldConfig {
-  name: string;
-  type?: string;
-  label: string;
-  placeholder?: string;
-  validators?: any[];
-  errorMessages?: Record<string, string>;
-  confirmField?: string;
-}
+import { FormFieldConfig } from '../../models/field-config.model';
 
 @Component({
   selector: 'app-dynamic-form',

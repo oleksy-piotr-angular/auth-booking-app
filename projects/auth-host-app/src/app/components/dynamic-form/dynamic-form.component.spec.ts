@@ -6,12 +6,10 @@ import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 
-import {
-  DynamicFormComponent,
-  FormFieldConfig,
-} from './dynamic-form.component';
+import { DynamicFormComponent } from './dynamic-form.component';
 import { DynamicInputComponent } from '../dynamic-input/dynamic-input.component';
 import { InlineErrorsComponent } from '../inline-errors/inline-errors.component';
+import { FormFieldConfig } from '../../models/field-config.model';
 
 describe('DynamicFormComponent', () => {
   let fixture: ComponentFixture<DynamicFormComponent>;
