@@ -2,7 +2,7 @@
 
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
-import { TokenService } from '../../services/token/token.service';
+import { TokenService } from '@booking-app/auth';
 
 export const unauthGuard: CanActivateFn = () => {
   const token = inject(TokenService).getToken();

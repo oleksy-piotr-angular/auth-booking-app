@@ -13,7 +13,7 @@ import {
 } from '@angular/common/http';
 
 import { authInterceptor } from './auth.interceptor';
-import { TokenService } from '../services/token/token.service';
+import { TokenService } from '@booking-app/auth';
 
 // 1) Adapter class so Angular sees a valid HttpInterceptor
 class AuthInterceptorAdapter implements HttpInterceptor {

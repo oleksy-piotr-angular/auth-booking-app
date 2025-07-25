@@ -3,7 +3,6 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { unauthGuard } from './unauth.guard';
 import { Router } from '@angular/router';
-import { TokenService } from '../../services/token/token.service';
 import {
   createRouterSpy,
   provideMockRouter,
@@ -11,6 +10,7 @@ import {
   provideMockTokenService,
 } from 'projects/auth-host-app/testing/test-helpers';
 import { runInInjectionContext } from '@angular/core';
+import { TokenService } from '@booking-app/auth';
 
 describe('unauthGuard (fn)', () => {
   let routerSpy: jasmine.SpyObj<Router>;

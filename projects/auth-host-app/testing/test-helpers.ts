@@ -1,7 +1,6 @@
 //projects/auth-host-app/testing/test-helpers.ts
 import { Router } from '@angular/router';
-import { AuthService } from '../src/app/services/auth/auth.service';
-import { TokenService } from '../src/app/services/token/token.service';
+import { AuthService, TokenService } from '@booking-app/auth';
 
 export function createRouterSpy() {
   return jasmine.createSpyObj<Router>('Router', ['navigate']);

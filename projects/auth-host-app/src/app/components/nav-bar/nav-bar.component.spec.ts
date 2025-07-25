@@ -6,9 +6,9 @@ import { CommonModule } from '@angular/common';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavBarComponent } from './nav-bar.component';
-import { TokenService } from '../../services/token/token.service';
 import { Router, ActivatedRoute, convertToParamMap } from '@angular/router';
 import { SharedMaterialModule } from '@booking-app/shared-material';
+import { TokenService } from '@booking-app/auth';
 
 //── Stub out routerLink & routerLinkActive ───────────────────────────────────
 @Directive({ selector: '[routerLink]', standalone: true })

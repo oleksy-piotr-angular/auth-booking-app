@@ -6,7 +6,7 @@ import {
   HttpRequest,
   HttpHandlerFn,
 } from '@angular/common/http';
-import { TokenService } from '../services/token/token.service';
+import { TokenService } from '@booking-app/auth';
 
 export const authInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,

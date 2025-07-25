@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { TokenService } from '../../services/token/token.service';
 import { SharedMaterialModule } from '@booking-app/shared-material';
+import { TokenService } from '@booking-app/auth';
 
 @Component({
   selector: 'app-nav-bar',

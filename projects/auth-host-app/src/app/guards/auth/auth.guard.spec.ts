@@ -8,8 +8,8 @@ import {
   provideMockTokenService,
 } from 'projects/auth-host-app/testing/test-helpers';
 import { Router } from '@angular/router';
-import { TokenService } from '../../services/token/token.service';
 import { runInInjectionContext } from '@angular/core';
+import { TokenService } from '@booking-app/auth';
 
 describe('authGuard (fn)', () => {
   let routerSpy: jasmine.SpyObj<Router>;
