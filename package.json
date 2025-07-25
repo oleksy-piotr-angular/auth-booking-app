@@ -8,7 +8,7 @@
     "start:details-mfe": "ng serve details-mfe",
     "start:search-mfe": "ng serve search-mfe",
     "ng build": "ng build",
-    "start:mf-all": "concurrently \"npx ng build shared-material\" \"npm run start:auth-host-app\" \"npm run start:details-mfe\" \"npm run start:search-mfe\"",
+    "start:mf-all": "concurrently \"npx ng build tokens\" \"npx ng build auth\" \"npx ng build shared-material\" \"npm run start:auth-host-app\" \"npm run start:details-mfe\" \"npm run start:search-mfe\"",
     "start:mf-all-without-lib-compilation": "concurrently \"npm run start:auth-host-app\" \"npm run start:details-mfe\" \"npm run start:search-mfe\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",

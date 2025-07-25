@@ -16,7 +16,12 @@
     "moduleResolution": "node",
     "paths": {
       "@booking-app/shared-material": ["dist/shared-material"],
-      "@booking-app/shared-material/*": ["dist/shared-material/*"]
+      "@booking-app/shared-material/*": ["dist/shared-material/*"],
+      "@booking-app/auth": ["dist/auth"],
+      "@booking-app/auth/*": ["dist/auth/*"],
+      "@booking-app/environments/*": ["environments/*"],
+      "@booking-app/tokens": ["dist/tokens"],
+      "@booking-app/tokens/*": ["dist/tokens/*"]
     },
     "importHelpers": true,
     "target": "ES2022",
