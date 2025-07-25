@@ -1,58 +1,29 @@
 // projects/_shell-app/src/app/host.routes.ts
 import { Routes } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/module-federation';
-import { LoginComponent } from './pages/login/login.component';
 import { unauthGuard } from './guards/unauth/unauth.guard';
-import { RegisterComponent } from './pages/register/register.component';
-import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
-import { ProfileComponent } from './pages/profile/profile.component';
 import { authGuard } from './guards/auth/auth.guard';
-import { ResetPasswordComponent } from './pages/reset-password/reset-password.component';
-import { resetTokenGuard } from './guards/reset-token/reset-token.guard';
 
 export const HOST_ROUTES: Routes = [
   // Redirect root URL to profile
-  { path: '', redirectTo: 'profile', pathMatch: 'full' },
+  { path: '', redirectTo: 'auth-mfe', pathMatch: 'full' },
 
-  // Public routes (only for unauthenticated users)
+  // Public routes Lazy-loaded routes for micro frontends (only for unauthenticated users)
   {
-    path: 'login',
-    component: LoginComponent,
+    path: 'auth-mfe',
     canActivate: [unauthGuard],
-  },
-
-  // Public routes (only for unauthenticated users)
-  {
-    path: 'login',
-    component: LoginComponent,
-    canActivate: [unauthGuard],
-  },
-  {
-    path: 'register',
-    component: RegisterComponent,
-    canActivate: [unauthGuard],
-  },
-  {
-    path: 'forgot-password',
-    component: ForgotPasswordComponent,
-    canActivate: [unauthGuard],
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordComponent,
-    canActivate: [unauthGuard, resetTokenGuard],
-  },
-
-  // Protected route
-  {
-    path: 'profile',
-    component: ProfileComponent,
-    canActivate: [authGuard],
+    loadChildren: () =>
+      loadRemoteModule({
+        type: 'module',
+        remoteEntry: 'http://localhost:4203/remoteEntry.js',
+        exposedModule: './routes',
+      }).then((m) => m.AUTH_ROUTES),
   },
 
   // Lazy-loaded routes for micro frontends
   {
     path: 'details-mfe',
+    canActivate: [authGuard],
     loadChildren: () =>
       loadRemoteModule({
         type: 'module',
@@ -62,6 +33,7 @@ export const HOST_ROUTES: Routes = [
   },
   {
     path: 'search-mfe',
+    canActivate: [authGuard],
     loadChildren: () =>
       loadRemoteModule({
         type: 'module',

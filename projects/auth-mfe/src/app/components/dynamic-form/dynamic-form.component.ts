@@ -12,7 +12,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 
 import { DynamicInputComponent } from '../dynamic-input/dynamic-input.component';
-import { passwordsMatchValidator } from '../../shared/Validators/password-match/passwords-match.validator';
+import { passwordsMatchValidator } from '../../Validators/password-match/passwords-match.validator';
 import { FormFieldConfig } from '../../models/field-config.model';
 
 @Component({
