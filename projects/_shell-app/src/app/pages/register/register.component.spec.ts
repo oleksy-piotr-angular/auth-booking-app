@@ -16,7 +16,7 @@ import {
   provideMockAuthService,
   createRouterSpy,
   provideMockRouter,
-} from 'projects/shell-app/testing/test-helpers';
+} from 'projects/_shell-app/testing/test-helpers';
 import { Validators } from '@angular/forms';
 
 import { FormFieldConfig } from '../../models/field-config.model';

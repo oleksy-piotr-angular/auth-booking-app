@@ -12,7 +12,7 @@ import { resetTokenGuard } from './reset-token.guard';
 import {
   createRouterSpy,
   provideMockRouter,
-} from 'projects/shell-app/testing/test-helpers';
+} from 'projects/_shell-app/testing/test-helpers';
 
 describe('resetTokenGuard (fn)', () => {
   let routerSpy: jasmine.SpyObj<Router>;
