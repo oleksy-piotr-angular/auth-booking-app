@@ -1,5 +1,4 @@
-// projects/auth-host-app/src/app/services/auth/auth.service.spec.ts
-
+// projects/auth/src/lib/auth.service.spec.ts
 import { TestBed } from '@angular/core/testing';
 import {
   HttpClientTestingModule,
@@ -7,8 +6,8 @@ import {
 } from '@angular/common/http/testing';
 
 import { AuthService } from './auth.service';
-import { TokenService } from '../token/token.service';
-import { environment } from '../../../../../../environments/environment';
+import { TokenService } from './token.service';
+import { environment } from '@booking-app/environments/environment';
 
 describe('AuthService (TDD)', () => {
   let service: AuthService;

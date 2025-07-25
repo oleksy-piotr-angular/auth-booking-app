@@ -1,7 +1,6 @@
-// projects/auth-host-app/src/app/services/token/token.service.ts
-
+// projects/auth/src/lib/token.service.ts
 import { Injectable } from '@angular/core';
-import { isTokenExpired } from '../../shared/utils/jwt.util';
+import { isTokenExpired } from './utils/jwt.utils';
 
 @Injectable({ providedIn: 'root' })
 export class TokenService {

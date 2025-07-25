@@ -1,5 +1,4 @@
-// projects/auth-host-app/src/app/services/token/token.service.spec.ts
-
+// projects/auth/src/lib/token.service.spec.ts
 import { TestBed } from '@angular/core/testing';
 import { TokenService } from './token.service';
 

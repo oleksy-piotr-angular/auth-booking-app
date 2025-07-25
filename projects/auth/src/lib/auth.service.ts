@@ -1,26 +1,22 @@
-// projects/auth-host-app/src/app/services/auth/auth.service.ts
-
-import { Injectable } from '@angular/core';
+// projects/auth/src/lib/auth.service.ts
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
-
-import { environment } from '../../../../../../environments/environment';
-import { TokenService } from '../token/token.service';
-
+import { TokenService } from './token.service';
 import {
   LoginPayload,
-  RegisterPayload,
-  UserProfile,
   LoginResponseDto,
+  RegisterPayload,
   RegisterResponseDto,
-} from '../../dtos/auth.dto';
-import { LoginData, RegisterData } from '../../models/auth.model';
-
+  UserProfile,
+} from './dtos/auth.dto';
+import { LoginData, RegisterData } from './models/auth.model';
 import {
   mapLoginDtoToAuthToken,
   mapRegisterDtoToAuthToken,
-} from '../../mappers/auth.mapper';
+} from './mappers/auth.mapper';
+import { AUTH_API_BASE } from '@booking-app/tokens';
 
 @Injectable({
   providedIn: 'root',
@@ -33,11 +29,15 @@ export class AuthService {
     return this.authSubject.asObservable();
   }
 
-  constructor(private http: HttpClient, private tokenService: TokenService) {}
+  constructor(
+    @Inject(AUTH_API_BASE) private apiBase: string,
+    private http: HttpClient,
+    private tokenService: TokenService
+  ) {}
 
   public register(payload: RegisterPayload): Observable<RegisterData> {
     return this.http
-      .post<RegisterResponseDto>(`${environment.apiBase}/register`, payload)
+      .post<RegisterResponseDto>(`${this.apiBase}/register`, payload)
       .pipe(
         tap((resp) => {
           this.tokenService.setToken(resp.accessToken);
@@ -50,7 +50,7 @@ export class AuthService {
 
   public login(payload: LoginPayload): Observable<LoginData> {
     return this.http
-      .post<LoginResponseDto>(`${environment.apiBase}/login`, payload)
+      .post<LoginResponseDto>(`${this.apiBase}/login`, payload)
       .pipe(
         tap((resp) => {
           this.tokenService.setToken(resp.accessToken);
@@ -62,13 +62,13 @@ export class AuthService {
   }
 
   public forgotPassword(email: string): Observable<unknown> {
-    return this.http.post(`${environment.apiBase}/auth/forgot-password`, {
+    return this.http.post(`${this.apiBase}/auth/forgot-password`, {
       email,
     });
   }
 
   public resetPassword(token: string, password: string): Observable<void> {
-    return this.http.post<void>(`${environment.apiBase}/auth/reset-password`, {
+    return this.http.post<void>(`${this.apiBase}/auth/reset-password`, {
       token,
       password,
     });
@@ -90,6 +90,6 @@ export class AuthService {
     if (!raw) {
       throw new Error('User ID not available');
     }
-    return this.http.get<UserProfile>(`${environment.apiBase}/users/${raw}`);
+    return this.http.get<UserProfile>(`${this.apiBase}/users/${raw}`);
   }
 }
