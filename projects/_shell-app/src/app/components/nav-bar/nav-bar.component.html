@@ -1,15 +1,15 @@
 <mat-toolbar color="primary">
   <ng-container *ngIf="!isAuthenticated; else loggedIn">
-    <button mat-button routerLink="login" routerLinkActive="active">
+    <button mat-button routerLink="auth-mfe/login" routerLinkActive="active">
       <mat-icon>login</mat-icon> Login
     </button>
-    <button mat-button routerLink="register" routerLinkActive="active">
+    <button mat-button routerLink="auth-mfe/register" routerLinkActive="active">
       <mat-icon>person_add</mat-icon> Register
     </button>
   </ng-container>
 
   <ng-template #loggedIn>
-    <button mat-button routerLink="profile" routerLinkActive="active">
+    <button mat-button routerLink="auth-mfe/profile" routerLinkActive="active">
       <mat-icon>person</mat-icon> Profile
     </button>
     <button mat-button routerLink="search-mfe" routerLinkActive="active">

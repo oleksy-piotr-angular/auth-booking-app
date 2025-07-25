@@ -40,7 +40,7 @@ describe('unauthGuard (fn)', () => {
     expect(routerSpy.navigate).not.toHaveBeenCalled();
   }));
 
-  it('redirects to "/" when already authenticated', fakeAsync(() => {
+  it('redirects to "search-mfe" when already authenticated', fakeAsync(() => {
     tokenSpy.getToken.and.returnValue('token.xyz');
 
     const result = runInInjectionContext(TestBed, () =>
@@ -49,6 +49,6 @@ describe('unauthGuard (fn)', () => {
 
     tick();
     expect(result).toBeFalse();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/']);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['search-mfe']);
   }));
 });

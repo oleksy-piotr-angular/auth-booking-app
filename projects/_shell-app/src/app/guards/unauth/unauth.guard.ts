@@ -12,6 +12,6 @@ export const unauthGuard: CanActivateFn = () => {
     return true;
   }
 
-  router.navigate(['/']);
+  router.navigate(['search-mfe']);
   return false;
 };

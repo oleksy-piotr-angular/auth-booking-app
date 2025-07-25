@@ -16,7 +16,7 @@ export const HOST_ROUTES: Routes = [
       loadRemoteModule({
         type: 'module',
         remoteEntry: 'http://localhost:4203/remoteEntry.js',
-        exposedModule: './routes',
+        exposedModule: './authRoutes',
       }).then((m) => m.AUTH_ROUTES),
   },
 
@@ -28,7 +28,7 @@ export const HOST_ROUTES: Routes = [
       loadRemoteModule({
         type: 'module',
         remoteEntry: 'http://localhost:4201/remoteEntry.js',
-        exposedModule: './routes',
+        exposedModule: './detailsRoutes',
       }).then((m) => m.DETAILS_ROUTES),
   },
   {

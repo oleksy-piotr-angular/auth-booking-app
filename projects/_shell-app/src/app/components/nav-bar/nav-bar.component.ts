@@ -21,6 +21,6 @@ export class NavBarComponent {
 
   logout(): void {
     this.tokenService.clearToken();
-    this.router.navigate(['login']);
+    this.router.navigate(['auth-mfe', 'login']);
   }
 }

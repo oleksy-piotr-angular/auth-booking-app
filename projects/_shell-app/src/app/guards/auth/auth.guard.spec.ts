@@ -27,7 +27,7 @@ describe('authGuard (fn)', () => {
     });
   });
 
-  it('redirects to /login when NOT authenticated', fakeAsync(() => {
+  it('redirects to /auth-mfe when NOT authenticated', fakeAsync(() => {
     tokenSpy.getToken.and.returnValue(null);
 
     const result = runInInjectionContext(TestBed, () =>
@@ -36,7 +36,7 @@ describe('authGuard (fn)', () => {
 
     tick();
     expect(result).toBeFalse();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['login']);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['auth-mfe']);
   }));
 
   it('allows activation when authenticated', fakeAsync(() => {

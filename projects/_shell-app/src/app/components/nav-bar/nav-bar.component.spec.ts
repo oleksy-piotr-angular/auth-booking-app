@@ -74,7 +74,7 @@ describe('NavBarComponent', () => {
       .queryAll(By.directive(RouterLinkStubDirective))
       .map((de) => de.injector.get(RouterLinkStubDirective).linkParams);
     expect(links).toEqual(
-      jasmine.arrayWithExactContents(['login', 'register'])
+      jasmine.arrayWithExactContents(['auth-mfe/login', 'auth-mfe/register'])
     );
 
     const icons = fixture.debugElement
@@ -93,7 +93,9 @@ describe('NavBarComponent', () => {
     const links = fixture.debugElement
       .queryAll(By.directive(RouterLinkStubDirective))
       .map((de) => de.injector.get(RouterLinkStubDirective).linkParams);
-    expect(links).toEqual(jasmine.arrayContaining(['profile', 'search-mfe']));
+    expect(links).toEqual(
+      jasmine.arrayContaining(['auth-mfe/profile', 'search-mfe'])
+    );
 
     // verify icons: person, search, logout
     const icons = fixture.debugElement
@@ -114,6 +116,6 @@ describe('NavBarComponent', () => {
     logoutBtn.triggerEventHandler('click', null);
 
     expect(tokenSpy.clearToken).toHaveBeenCalled();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['login']);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['auth-mfe', 'login']);
   });
 });
