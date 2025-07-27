@@ -395,7 +395,7 @@
       }
     },
 
-    "auth": {
+    "auth-lib": {
       "projectType": "library",
       "root": "libs/auth",
       "sourceRoot": "libs/auth/src",
@@ -425,7 +425,7 @@
         }
       }
     },
-    "tokens": {
+    "tokens-lib": {
       "projectType": "library",
       "root": "libs/tokens",
       "sourceRoot": "libs/tokens/src",
