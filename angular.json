@@ -345,6 +345,56 @@
         }
       }
     },
+    "auth-mfe": {
+      "projectType": "application",
+      "root": "projects/auth-mfe",
+      "sourceRoot": "projects/auth-mfe/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "ngx-build-plus:browser",
+          "options": {
+            "outputPath": "dist/auth-mfe",
+            "index": "projects/auth-mfe/src/index.html",
+            "main": "projects/auth-mfe/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "projects/auth-mfe/tsconfig.app.json",
+            "assets": [
+              "projects/auth-mfe/src/favicon.ico",
+              "projects/auth-mfe/src/assets"
+            ],
+            "styles": [
+              "projects/auth-mfe/src/styles.scss",
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
+            "scripts": [],
+            "extraWebpackConfig": "projects/auth-mfe/webpack.config.js",
+            "commonChunk": false
+          },
+          "defaultConfiguration": "development"
+        },
+        "serve": {
+          "builder": "ngx-build-plus:dev-server",
+          "options": {
+            "port": 4203,
+            "buildTarget": "auth-mfe:build"
+          },
+          "configurations": {
+            "production": { "buildTarget": "auth-mfe:build:production" },
+            "development": { "buildTarget": "auth-mfe:build:development" }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/auth-mfe/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
+        }
+      }
+    },
+
     "auth": {
       "projectType": "library",
       "root": "libs/auth",
