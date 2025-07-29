@@ -122,7 +122,11 @@ describe('AuthService (TDD)', () => {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [AuthService, { provide: TokenService, useValue: tokenSpy }],
+      providers: [
+        AuthService,
+        { provide: TokenService, useValue: tokenSpy },
+        { provide: AUTH_API_BASE, useValue: environment.apiBase },
+      ],
     });
     service = TestBed.inject(AuthService);
 
