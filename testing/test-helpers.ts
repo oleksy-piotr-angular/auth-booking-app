@@ -1,4 +1,7 @@
 //projects/_shell-app/testing/test-helpers.ts
+import { Type } from '@angular/core';
+import { ComponentFixture } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { AuthService, TokenService } from '@booking-app/auth';
 
@@ -39,4 +42,18 @@ export function provideMockTokenService(
     provide: TokenService,
     useValue: tokenSpy || createTokenServiceSpy(),
   };
+}
+
+/**
+ * Locate a stub/directive in the fixture, fail early with context,
+ * and return its componentInstance typed as T.
+ */
+export function getStub<T, C = any>(
+  fixture: ComponentFixture<C>,
+  stubType: Type<T>,
+  context: string
+): T {
+  const debugEl = fixture.debugElement.query(By.directive(stubType));
+  expect(debugEl).withContext(context).not.toBeNull();
+  return debugEl!.componentInstance as T;
 }
