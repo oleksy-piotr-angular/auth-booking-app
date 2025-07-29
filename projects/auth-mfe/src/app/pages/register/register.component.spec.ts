@@ -1,5 +1,4 @@
 // projects/auth-mfe/src/app/pages/register/register.component.spec.ts
-
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {
   ComponentFixture,
@@ -14,10 +13,13 @@ import { RegisterComponent } from './register.component';
 import {
   createAuthServiceSpy,
   createRouterSpy,
+  getStub,
   provideMockAuthService,
   provideMockRouter,
 } from 'testing/test-helpers';
 import { AuthService, RegisterData } from '@booking-app/auth';
+import { FormErrorComponent } from '../../components/form-error/form-error.component';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Stub out the standalone dynamic-form
@@ -56,7 +58,8 @@ describe('RegisterComponent', () => {
     routerSpy = createRouterSpy();
 
     await TestBed.configureTestingModule({
-      declarations: [RegisterComponent, DynamicFormStubComponent],
+      imports: [RegisterComponent, FormErrorComponent, NoopAnimationsModule],
+      declarations: [DynamicFormStubComponent],
       providers: [
         provideMockAuthService(authSpy),
         provideMockRouter(routerSpy),
@@ -73,9 +76,11 @@ describe('RegisterComponent', () => {
   });
 
   it('should pass the correct config to the dynamic form', () => {
-    const dynamicForm = fixture.debugElement.query(
-      (d) => d.componentInstance instanceof DynamicFormStubComponent
-    ).componentInstance as DynamicFormStubComponent;
+    const dynamicForm = getStub<DynamicFormStubComponent>(
+      fixture,
+      DynamicFormStubComponent,
+      'DynamicForm component should exist'
+    );
 
     expect(dynamicForm.config).toEqual(component.config);
     expect(dynamicForm.submitLabel).toBe('Register');
@@ -84,9 +89,11 @@ describe('RegisterComponent', () => {
   it('calls AuthService.register with payload when dynamic-form emits', fakeAsync(() => {
     authSpy.register.and.returnValue(of(mockRegisterData));
 
-    const dynamicForm = fixture.debugElement.query(
-      (d) => d.componentInstance instanceof DynamicFormStubComponent
-    ).componentInstance as DynamicFormStubComponent;
+    const dynamicForm = getStub<DynamicFormStubComponent>(
+      fixture,
+      DynamicFormStubComponent,
+      'DynamicForm component should exist'
+    );
 
     dynamicForm.submitted.emit(validFormValue);
     tick();
@@ -97,9 +104,11 @@ describe('RegisterComponent', () => {
   it('navigates to /login on success', fakeAsync(() => {
     authSpy.register.and.returnValue(of(mockRegisterData));
 
-    const dynamicForm = fixture.debugElement.query(
-      (d) => d.componentInstance instanceof DynamicFormStubComponent
-    ).componentInstance as DynamicFormStubComponent;
+    const dynamicForm = getStub<DynamicFormStubComponent>(
+      fixture,
+      DynamicFormStubComponent,
+      'DynamicForm component should exist'
+    );
 
     dynamicForm.submitted.emit(validFormValue);
     tick();
@@ -111,16 +120,23 @@ describe('RegisterComponent', () => {
     const err = { message: 'Email taken' };
     authSpy.register.and.returnValue(throwError(() => err));
 
-    const dynamicForm = fixture.debugElement.query(
-      (d) => d.componentInstance instanceof DynamicFormStubComponent
-    ).componentInstance as DynamicFormStubComponent;
+    const dynamicForm = getStub<DynamicFormStubComponent>(
+      fixture,
+      DynamicFormStubComponent,
+      'DynamicForm component should exist'
+    );
 
     dynamicForm.submitted.emit(validFormValue);
     tick();
     fixture.detectChanges();
 
     expect(component.error).toBe(err.message);
-    const errorEl = fixture.nativeElement.querySelector('.error');
-    expect(errorEl.textContent).toContain(err.message);
+
+    const errCmp = getStub<FormErrorComponent>(
+      fixture,
+      FormErrorComponent,
+      'FormErrorComponent stub not found'
+    );
+    expect(errCmp.message).toBe(err.message);
   }));
 });
