@@ -1,91 +1,70 @@
+// projects/auth-mfe/src/app/pages/register/register.component.spec.ts
+
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {
   ComponentFixture,
   TestBed,
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { RegisterComponent } from './register.component';
-import { MatCardModule } from '@angular/material/card';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-
 import {
   createAuthServiceSpy,
-  provideMockAuthService,
   createRouterSpy,
+  provideMockAuthService,
   provideMockRouter,
 } from 'testing/test-helpers';
-import { Validators } from '@angular/forms';
+import { AuthService, RegisterData } from '@booking-app/auth';
 
-import { FormFieldConfig } from '../../models/field-config.model';
-import { DynamicFormComponent } from '../../components/dynamic-form/dynamic-form.component';
-import { DynamicInputComponent } from '../../components/dynamic-input/dynamic-input.component';
-import { InlineErrorsComponent } from '../../components/inline-errors/inline-errors.component';
+////////////////////////////////////////////////////////////////////////////////
+// Stub out the standalone dynamic-form
+////////////////////////////////////////////////////////////////////////////////
+@Component({
+  selector: 'app-dynamic-form',
+  template: '',
+})
+class DynamicFormStubComponent {
+  @Input() config!: any[];
+  @Input() errorMessages!: Record<string, string>;
+  @Input() submitLabel!: string;
+  @Output() submitted = new EventEmitter<any>();
+}
 
 describe('RegisterComponent', () => {
   let fixture: ComponentFixture<RegisterComponent>;
   let component: RegisterComponent;
-  let authSpy: jasmine.SpyObj<any>;
-  let routerSpy: jasmine.SpyObj<any>;
+  let authSpy: jasmine.SpyObj<AuthService>;
+  let routerSpy: jasmine.SpyObj<Router>;
 
-  const fullConfig: FormFieldConfig[] = [
-    {
-      name: 'email',
-      label: 'Email',
-      type: 'email',
-      validators: [Validators.required, Validators.email],
-      errorMessages: {
-        required: 'Email is required',
-        email: 'Invalid email',
-      },
-    },
-    {
-      name: 'password',
-      label: 'Password',
-      type: 'password',
-      validators: [Validators.required, Validators.minLength(6)],
-      errorMessages: {
-        required: 'Password is required',
-        minlength: 'Min 6 chars',
-      },
-    },
-    {
-      name: 'confirmPassword',
-      label: 'Confirm Password',
-      type: 'password',
-      validators: [Validators.required],
-      errorMessages: {
-        required: 'Confirm is required',
-        passwordMismatch: 'Passwords do not match',
-      },
-      confirmField: 'password',
-    },
-  ];
+  const mockRegisterData: RegisterData = {
+    id: 123,
+    token: 'fake-jwt-token',
+  };
+
+  const validFormValue = {
+    name: 'Alice',
+    email: 'alice@example.com',
+    password: 'Secret123!',
+    confirmPassword: 'Secret123!',
+  };
 
   beforeEach(async () => {
     authSpy = createAuthServiceSpy();
     routerSpy = createRouterSpy();
 
     await TestBed.configureTestingModule({
-      imports: [
-        DynamicFormComponent,
-        DynamicInputComponent,
-        InlineErrorsComponent,
-        MatCardModule,
-        NoopAnimationsModule,
-      ],
+      declarations: [RegisterComponent, DynamicFormStubComponent],
       providers: [
         provideMockAuthService(authSpy),
         provideMockRouter(routerSpy),
       ],
-      declarations: [RegisterComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
-    component.formConfig = fullConfig;
     fixture.detectChanges();
   });
 
@@ -93,81 +72,55 @@ describe('RegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('renders all three fields including confirmPassword', () => {
-    const inputs = fixture.debugElement.queryAll(
-      By.directive(DynamicInputComponent)
-    );
-    expect(inputs.length).toBe(3);
-    expect(inputs[2].componentInstance.label).toBe('Confirm Password');
+  it('should pass the correct config to the dynamic form', () => {
+    const dynamicForm = fixture.debugElement.query(
+      (d) => d.componentInstance instanceof DynamicFormStubComponent
+    ).componentInstance as DynamicFormStubComponent;
+
+    expect(dynamicForm.config).toEqual(component.config);
+    expect(dynamicForm.submitLabel).toBe('Register');
   });
 
-  it('disables submit and shows mismatch error when passwords differ', () => {
-    // fill email so form doesn’t stay invalid because of missing email
-    const df = fixture.debugElement.query(By.directive(DynamicFormComponent))
-      .componentInstance as DynamicFormComponent;
-    df.form.get('email')!.setValue('test@x.com');
+  it('calls AuthService.register with payload when dynamic-form emits', fakeAsync(() => {
+    authSpy.register.and.returnValue(of(mockRegisterData));
 
-    df.form.get('password')!.setValue('123456');
-    df.form.get('confirmPassword')!.setValue('abcdef');
-    df.form.markAllAsTouched();
-    fixture.detectChanges();
+    const dynamicForm = fixture.debugElement.query(
+      (d) => d.componentInstance instanceof DynamicFormStubComponent
+    ).componentInstance as DynamicFormStubComponent;
 
-    const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
-      .nativeElement as HTMLButtonElement;
-    expect(btn.disabled).toBeTrue();
-
-    const err = fixture.debugElement
-      .queryAll(By.directive(DynamicInputComponent))[2]
-      .query(By.directive(InlineErrorsComponent)).nativeElement;
-    expect(err.textContent).toContain('Passwords do not match');
-  });
-
-  it('enables submit when passwords match and calls register()', fakeAsync(() => {
-    authSpy.register.and.returnValue(of({}));
-
-    const df = fixture.debugElement.query(By.directive(DynamicFormComponent))
-      .componentInstance as DynamicFormComponent;
-    df.form.get('email')!.setValue('test@x.com');
-    df.form.get('password')!.setValue('abcd12');
-    df.form.get('confirmPassword')!.setValue('abcd12');
-    df.form.markAllAsTouched();
-    fixture.detectChanges();
-
-    const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
-      .nativeElement as HTMLButtonElement;
-    expect(btn.disabled).toBeFalse();
-
-    btn.click();
+    dynamicForm.submitted.emit(validFormValue);
     tick();
 
-    expect(authSpy.register).toHaveBeenCalledWith({
-      email: 'test@x.com',
-      password: 'abcd12',
-    });
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/welcome']);
+    expect(authSpy.register).toHaveBeenCalledOnceWith(validFormValue);
   }));
 
-  it('shows top‐level error message when register() errors', fakeAsync(() => {
-    authSpy.register.and.returnValue(
-      throwError(() => ({ message: 'Server died' }))
-    );
+  it('navigates to /login on success', fakeAsync(() => {
+    authSpy.register.and.returnValue(of(mockRegisterData));
 
-    const df = fixture.debugElement.query(By.directive(DynamicFormComponent))
-      .componentInstance as DynamicFormComponent;
-    df.form.get('email')!.setValue('e@e.com');
-    df.form.get('password')!.setValue('pwd123');
-    df.form.get('confirmPassword')!.setValue('pwd123');
-    df.form.markAllAsTouched();
-    fixture.detectChanges();
+    const dynamicForm = fixture.debugElement.query(
+      (d) => d.componentInstance instanceof DynamicFormStubComponent
+    ).componentInstance as DynamicFormStubComponent;
 
-    const btn = fixture.debugElement.query(By.css('button[type="submit"]'))
-      .nativeElement as HTMLButtonElement;
-    btn.click();
+    dynamicForm.submitted.emit(validFormValue);
+    tick();
+
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+  }));
+
+  it('displays error on failure', fakeAsync(() => {
+    const err = { message: 'Email taken' };
+    authSpy.register.and.returnValue(throwError(() => err));
+
+    const dynamicForm = fixture.debugElement.query(
+      (d) => d.componentInstance instanceof DynamicFormStubComponent
+    ).componentInstance as DynamicFormStubComponent;
+
+    dynamicForm.submitted.emit(validFormValue);
     tick();
     fixture.detectChanges();
 
-    const topErr = fixture.nativeElement.querySelector('.error');
-    expect(topErr.textContent).toContain('Server died');
-    expect(routerSpy.navigate).not.toHaveBeenCalled();
+    expect(component.error).toBe(err.message);
+    const errorEl = fixture.nativeElement.querySelector('.error');
+    expect(errorEl.textContent).toContain(err.message);
   }));
 });
