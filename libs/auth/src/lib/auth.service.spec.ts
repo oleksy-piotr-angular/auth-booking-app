@@ -31,8 +31,7 @@ describe('AuthService (TDD)', () => {
       providers: [
         AuthService,
         { provide: TokenService, useValue: tokenSpy },
-        // provide a dummy base URL for tests:
-        { provide: AUTH_API_BASE, useValue: 'http://localhost' },
+        { provide: AUTH_API_BASE, useValue: environment.apiBase },
       ],
     });
 
