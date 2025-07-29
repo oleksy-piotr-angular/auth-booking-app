@@ -1,4 +1,3 @@
-// projects/auth-mfe/src/app/pages/register/register.component.spec.ts
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {
   ComponentFixture,
@@ -19,13 +18,15 @@ import {
 } from 'testing/test-helpers';
 import { AuthService, RegisterData } from '@booking-app/auth';
 import { FormErrorComponent } from '../../components/form-error/form-error.component';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Stub out the standalone dynamic-form
 ////////////////////////////////////////////////////////////////////////////////
 @Component({
   selector: 'app-dynamic-form',
+  standalone: true,
   template: '',
 })
 class DynamicFormStubComponent {
@@ -40,6 +41,7 @@ describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let authSpy: jasmine.SpyObj<AuthService>;
   let routerSpy: jasmine.SpyObj<Router>;
+  let dynamicForm: DynamicFormStubComponent;
 
   const mockRegisterData: RegisterData = {
     id: 123,
@@ -58,85 +60,86 @@ describe('RegisterComponent', () => {
     routerSpy = createRouterSpy();
 
     await TestBed.configureTestingModule({
-      imports: [RegisterComponent, FormErrorComponent, NoopAnimationsModule],
-      declarations: [DynamicFormStubComponent],
+      imports: [RegisterComponent, DynamicFormStubComponent],
       providers: [
         provideMockAuthService(authSpy),
         provideMockRouter(routerSpy),
+        provideNoopAnimations(),
       ],
-    }).compileComponents();
+    })
+      .overrideComponent(RegisterComponent, {
+        set: {
+          imports: [CommonModule, DynamicFormStubComponent, FormErrorComponent],
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(RegisterComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    dynamicForm = getStub(
+      fixture,
+      DynamicFormStubComponent,
+      'dynamic-form missing'
+    );
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should pass the correct config to the dynamic form', () => {
-    const dynamicForm = getStub<DynamicFormStubComponent>(
-      fixture,
-      DynamicFormStubComponent,
-      'DynamicForm component should exist'
-    );
-
+  it('should pass config, errorMessages, and submitLabel to dynamic-form', () => {
     expect(dynamicForm.config).toEqual(component.config);
+    expect(dynamicForm.errorMessages).toEqual(component.errorMessages);
     expect(dynamicForm.submitLabel).toBe('Register');
   });
 
-  it('calls AuthService.register with payload when dynamic-form emits', fakeAsync(() => {
-    authSpy.register.and.returnValue(of(mockRegisterData));
+  // grouped tests for form submission flows
+  describe('when dynamic form submits', () => {
+    it('calls AuthService.register and navigates to /login on success', fakeAsync(() => {
+      authSpy.register.and.returnValue(of(mockRegisterData));
 
-    const dynamicForm = getStub<DynamicFormStubComponent>(
-      fixture,
-      DynamicFormStubComponent,
-      'DynamicForm component should exist'
-    );
+      dynamicForm.submitted.emit(validFormValue);
+      tick();
 
-    dynamicForm.submitted.emit(validFormValue);
-    tick();
+      expect(authSpy.register).toHaveBeenCalledOnceWith(validFormValue);
+      expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
+    }));
 
-    expect(authSpy.register).toHaveBeenCalledOnceWith(validFormValue);
-  }));
+    it('sets error and shows FormErrorComponent on failure', fakeAsync(() => {
+      const err = { message: 'Email taken' };
+      authSpy.register.and.returnValue(throwError(() => err));
 
-  it('navigates to /login on success', fakeAsync(() => {
-    authSpy.register.and.returnValue(of(mockRegisterData));
+      dynamicForm.submitted.emit(validFormValue);
+      tick();
+      fixture.detectChanges();
 
-    const dynamicForm = getStub<DynamicFormStubComponent>(
-      fixture,
-      DynamicFormStubComponent,
-      'DynamicForm component should exist'
-    );
+      expect(component.error).toBe(err.message);
 
-    dynamicForm.submitted.emit(validFormValue);
-    tick();
+      const errCmp = getStub<FormErrorComponent>(
+        fixture,
+        FormErrorComponent,
+        'FormErrorComponent missing'
+      );
+      expect(errCmp.message).toBe(err.message);
+    }));
 
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
-  }));
+    it('clears previous error on a successful retry', fakeAsync(() => {
+      const err = { message: 'Email taken' };
+      authSpy.register.and.returnValue(throwError(() => err));
 
-  it('displays error on failure', fakeAsync(() => {
-    const err = { message: 'Email taken' };
-    authSpy.register.and.returnValue(throwError(() => err));
+      dynamicForm.submitted.emit(validFormValue);
+      tick();
+      fixture.detectChanges();
+      expect(component.error).toBe(err.message);
 
-    const dynamicForm = getStub<DynamicFormStubComponent>(
-      fixture,
-      DynamicFormStubComponent,
-      'DynamicForm component should exist'
-    );
+      authSpy.register.and.returnValue(of(mockRegisterData));
+      dynamicForm.submitted.emit(validFormValue);
+      tick();
+      fixture.detectChanges();
 
-    dynamicForm.submitted.emit(validFormValue);
-    tick();
-    fixture.detectChanges();
-
-    expect(component.error).toBe(err.message);
-
-    const errCmp = getStub<FormErrorComponent>(
-      fixture,
-      FormErrorComponent,
-      'FormErrorComponent stub not found'
-    );
-    expect(errCmp.message).toBe(err.message);
-  }));
+      expect(component.error).toBeNull();
+    }));
+  });
 });
