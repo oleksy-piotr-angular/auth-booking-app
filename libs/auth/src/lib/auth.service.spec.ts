@@ -8,6 +8,7 @@ import {
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
 import { environment } from '@booking-app/environments/environment';
+import { AUTH_API_BASE } from '@booking-app/tokens';
 
 describe('AuthService (TDD)', () => {
   let service: AuthService;
@@ -27,7 +28,12 @@ describe('AuthService (TDD)', () => {
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [AuthService, { provide: TokenService, useValue: tokenSpy }],
+      providers: [
+        AuthService,
+        { provide: TokenService, useValue: tokenSpy },
+        // provide a dummy base URL for tests:
+        { provide: AUTH_API_BASE, useValue: 'http://localhost' },
+      ],
     });
 
     service = TestBed.inject(AuthService);
