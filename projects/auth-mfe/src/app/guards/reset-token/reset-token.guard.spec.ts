@@ -9,10 +9,7 @@ import {
 } from '@angular/router';
 
 import { resetTokenGuard } from './reset-token.guard';
-import {
-  createRouterSpy,
-  provideMockRouter,
-} from 'projects/_shell-app/testing/test-helpers';
+import { createRouterSpy, provideMockRouter } from 'testing/test-helpers';
 
 describe('resetTokenGuard (fn)', () => {
   let routerSpy: jasmine.SpyObj<Router>;

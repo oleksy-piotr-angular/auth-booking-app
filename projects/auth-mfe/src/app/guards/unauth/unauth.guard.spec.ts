@@ -8,7 +8,7 @@ import {
   provideMockRouter,
   createTokenServiceSpy,
   provideMockTokenService,
-} from 'projects/_shell-app/testing/test-helpers';
+} from 'testing/test-helpers';
 import { runInInjectionContext } from '@angular/core';
 import { TokenService } from '@booking-app/auth';
 
