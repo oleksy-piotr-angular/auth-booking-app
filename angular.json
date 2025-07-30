@@ -354,11 +354,14 @@
         "build": {
           "builder": "ngx-build-plus:browser",
           "options": {
+            "stylePreprocessorOptions": {
+              "includePaths": ["node_modules"]
+            },
             "outputPath": "dist/auth-mfe",
             "index": "projects/auth-mfe/src/index.html",
-            "main": "projects/auth-mfe/src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "projects/auth-mfe/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               "projects/auth-mfe/src/favicon.ico",
               "projects/auth-mfe/src/assets"
@@ -368,33 +371,79 @@
               "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
             ],
             "scripts": [],
+            "main": "projects/auth-mfe/src/main.ts",
             "extraWebpackConfig": "projects/auth-mfe/webpack.config.js",
             "commonChunk": false
           },
-          "defaultConfiguration": "development"
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2kb",
+                  "maximumError": "4kb"
+                }
+              ],
+              "outputHashing": "all",
+              "extraWebpackConfig": "projects/auth-mfe/webpack.prod.config.js"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "ngx-build-plus:dev-server",
           "options": {
             "port": 4203,
-            "buildTarget": "auth-mfe:build"
+            "publicHost": "http://localhost:4203",
+            "extraWebpackConfig": "projects/auth-mfe/webpack.config.js"
           },
           "configurations": {
-            "production": { "buildTarget": "auth-mfe:build:production" },
-            "development": { "buildTarget": "auth-mfe:build:development" }
+            "production": {
+              "buildTarget": "auth-mfe:build:production",
+              "extraWebpackConfig": "projects/auth-mfe/webpack.prod.config.js"
+            },
+            "development": {
+              "buildTarget": "auth-mfe:build:development"
+            }
           },
           "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "ngx-build-plus:extract-i18n",
+          "options": {
+            "buildTarget": "auth-mfe:build",
+            "extraWebpackConfig": "projects/auth-mfe/webpack.config.js"
+          }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "projects/auth-mfe/tsconfig.spec.json",
-            "polyfills": ["zone.js", "zone.js/testing"]
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "projects/auth-mfe/src/favicon.ico",
+              "projects/auth-mfe/src/assets"
+            ],
+            "styles": [
+              "projects/auth-mfe/src/styles.scss",
+              "node_modules/@angular/material/prebuilt-themes/indigo-pink.css"
+            ],
+            "scripts": []
           }
         }
       }
     },
-
     "auth-lib": {
       "projectType": "library",
       "root": "libs/auth",
@@ -480,10 +529,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/ui-lib-components/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }
