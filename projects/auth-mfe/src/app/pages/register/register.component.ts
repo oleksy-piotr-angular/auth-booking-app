@@ -1,63 +1,86 @@
-import { Component } from '@angular/core';
-import { FormFieldConfig } from '../../models/field-config.model';
-import { Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
+import { DynamicFormComponent } from '../../components/dynamic-form/dynamic-form.component';
+import { FormErrorComponent } from '../../components/form-error/form-error.component';
+import { AuthService, RegisterData, RegisterPayload } from '@booking-app/auth';
+import { Router } from '@angular/router';
+import { SharedMaterialModule } from '@booking-app/shared-material';
+import { finalize, take, takeUntil } from 'rxjs/operators';
+import { REGISTER_FORM_CONFIG } from './register.config';
+import { Subject } from 'rxjs';
+import { LoadingSpinnerComponent } from '@booking-app/ui-lib-components';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [],
-  template: ` <p>register works!</p> `,
+  imports: [
+    CommonModule,
+    DynamicFormComponent,
+    FormErrorComponent,
+    SharedMaterialModule,
+    LoadingSpinnerComponent,
+  ],
+  template: `
+    <mat-card>
+      <h2>Register</h2>
+      <app-dynamic-form
+        [config]="config"
+        [errorMessages]="errorMessages"
+        submitLabel="Register"
+        (submitted)="onSubmit($event)"
+      ></app-dynamic-form>
+      <app-form-error *ngIf="error" [message]="error"></app-form-error>
+
+      <app-loading-spinner *ngIf="isLoading" />
+    </mat-card>
+  `,
   styles: ``,
 })
 export class RegisterComponent {
-  public config: FormFieldConfig[] = [
-    {
-      name: 'username',
-      label: 'Username',
-      placeholder: 'Enter your username',
-      validators: [Validators.required, Validators.minLength(3)],
-      errorMessages: {
-        required: 'Username is required',
-        minlength: 'Username must be at least 3 characters',
-      },
-    },
-    {
-      name: 'email',
-      label: 'Email',
-      placeholder: 'Enter your email',
-      validators: [Validators.required, Validators.email],
-      errorMessages: {
-        required: 'Email is required',
-        email: 'Invalid email format',
-      },
-    },
-    {
-      name: 'password',
-      label: 'Password',
-      type: 'password',
-      placeholder: 'Enter a password',
-      validators: [Validators.required, Validators.minLength(6)],
-      errorMessages: {
-        required: 'Password is required',
-        minlength: 'Password must be at least 6 characters',
-      },
-    },
-    {
-      name: 'confirmPassword',
-      label: 'Confirm Password',
-      type: 'password',
-      placeholder: 'Repeat your password',
-      validators: [Validators.required],
-      confirmField: 'password',
-      errorMessages: {
-        required: 'Please confirm your password',
-        passwordMismatch: 'Passwords do not match',
-      },
-    },
-  ];
-  public error: string | null = null;
+  isLoading = false;
 
-  public onSubmit(): void {
-    throw new Error('Method not implemented.');
+  error: string | null = null;
+  errorMessages: Record<string, string>;
+
+  private destroy$ = new Subject<void>();
+
+  config = REGISTER_FORM_CONFIG;
+
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  constructor() {
+    // Collect error messages from the config
+    this.errorMessages = this.config.reduce((acc, { errorMessages = {} }) => {
+      Object.assign(acc, errorMessages);
+      return acc;
+    }, {} as Record<string, string>);
+  }
+
+  public onSubmit(formData: RegisterPayload): void {
+    this.error = null;
+    this.isLoading = true;
+
+    this.authService
+      .register(<RegisterPayload>formData)
+      .pipe(
+        takeUntil(this.destroy$),
+        take(1),
+        finalize(() => (this.isLoading = false))
+      )
+      .subscribe({
+        next: (_res: RegisterData) => {
+          this.router.navigate(['/profile']);
+        },
+        error: (err: any) => {
+          this.error = err?.message || 'Registration failed';
+        },
+      });
+  }
+
+  ngOnDestroy() {
+    // Emits to all piped takeUntil() calls, then completes the subject
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
