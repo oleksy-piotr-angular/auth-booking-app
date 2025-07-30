@@ -21,7 +21,9 @@
       "@booking-app/auth/*": ["dist/auth/*"],
       "@booking-app/environments/*": ["environments/*"],
       "@booking-app/tokens": ["dist/tokens"],
-      "@booking-app/tokens/*": ["dist/tokens/*"]
+      "@booking-app/tokens/*": ["dist/tokens/*"],
+      "@booking-app/ui-lib-components": ["./dist/ui-lib-components"],
+      "@booking-app/ui-lib-components/*": ["./dist/ui-lib-components/*"]
     },
     "importHelpers": true,
     "target": "ES2022",
