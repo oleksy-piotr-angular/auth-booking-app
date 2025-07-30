@@ -25,6 +25,7 @@ import { CommonModule } from '@angular/common';
 import { Validators } from '@angular/forms';
 import { LoadingSpinnerComponent } from '@booking-app/ui-lib-components';
 import { SharedMaterialModule } from '@booking-app/shared-material';
+import { REGISTER_FORM_CONFIG } from './register.config';
 
 ////////////////////////////////////////////////////////////////////////////////
 // Stub out the standalone dynamic-form
@@ -107,51 +108,7 @@ describe('RegisterComponent', () => {
   });
 
   it('defines the expected dynamic-form config', () => {
-    expect(component.config).toEqual([
-      {
-        name: 'username',
-        label: 'Username',
-        placeholder: 'Enter your username',
-        validators: [Validators.required, Validators.minLength(3)],
-        errorMessages: {
-          required: 'Username is required',
-          minlength: 'Username must be at least 3 characters',
-        },
-      },
-      {
-        name: 'email',
-        label: 'Email',
-        placeholder: 'Enter your email',
-        validators: [Validators.required, Validators.email],
-        errorMessages: {
-          required: 'Email is required',
-          email: 'Invalid email format',
-        },
-      },
-      {
-        name: 'password',
-        label: 'Password',
-        type: 'password',
-        placeholder: 'Enter a password',
-        validators: [Validators.required, Validators.minLength(6)],
-        errorMessages: {
-          required: 'Password is required',
-          minlength: 'Password must be at least 6 characters',
-        },
-      },
-      {
-        name: 'confirmPassword',
-        label: 'Confirm Password',
-        type: 'password',
-        placeholder: 'Repeat your password',
-        validators: [Validators.required],
-        confirmField: 'password',
-        errorMessages: {
-          required: 'Please confirm your password',
-          passwordMismatch: 'Passwords do not match',
-        },
-      },
-    ]);
+    expect(component.config).toEqual(REGISTER_FORM_CONFIG);
   });
 
   it('should pass config, errorMessages, and submitLabel to dynamic-form', () => {
