@@ -57,3 +57,13 @@ export function getStub<T, C = any>(
   expect(debugEl).withContext(context).not.toBeNull();
   return debugEl!.componentInstance as T;
 }
+
+export function getOptionalStub<T, C = any>(
+  fixture: ComponentFixture<C>,
+  stubType: Type<T>,
+  context: string
+): T | null {
+  const debugEl = fixture.debugElement.query(By.directive(stubType));
+  // no expect here—caller can assert null or not
+  return debugEl ? (debugEl.componentInstance as T) : null;
+}
