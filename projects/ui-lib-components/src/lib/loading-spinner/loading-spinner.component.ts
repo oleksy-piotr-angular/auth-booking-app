@@ -1,11 +1,20 @@
-import { provideAnimations } from '@angular/platform-browser/animations';
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { SharedMaterialModule } from '@booking-app/shared-material';
 
 @Component({
-  selector: 'lib-loading-spinner',
+  selector: 'app-loading-spinner',
   standalone: true,
-  imports: [],
-  template: '<p>Loading spinner works!</p>',
-  styles: '',
+  imports: [CommonModule, SharedMaterialModule],
+  template: `<div class="spinner"><mat-spinner color="primary" /></div>`,
+  styles: [
+    `
+      .spinner {
+        display: flex;
+        justify-content: center;
+        padding-top: 16px;
+      }
+    `,
+  ],
 })
 export class LoadingSpinnerComponent {}
