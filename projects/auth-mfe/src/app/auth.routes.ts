@@ -10,30 +10,20 @@ import { authGuard } from './guards/auth/auth.guard';
 
 export const AUTH_ROUTES: Routes = [
   {
-    path: 'login',
-    component: LoginComponent,
+    path: '',
     canActivate: [unauthGuard],
+    children: [
+      { path: '', redirectTo: 'login', pathMatch: 'full' },
+      { path: 'login', component: LoginComponent },
+      { path: 'register', component: RegisterComponent },
+      { path: 'forgot-password', component: ForgotPasswordComponent },
+      {
+        path: 'reset-password',
+        component: ResetPasswordComponent,
+        canActivate: [resetTokenGuard],
+      },
+    ],
   },
-  {
-    path: 'register',
-    component: RegisterComponent,
-    canActivate: [unauthGuard],
-  },
-  {
-    path: 'forgot-password',
-    component: ForgotPasswordComponent,
-    canActivate: [unauthGuard],
-  },
-  {
-    path: 'reset-password',
-    component: ResetPasswordComponent,
-    canActivate: [unauthGuard, resetTokenGuard],
-  },
-
-  // Protected route
-  {
-    path: 'profile',
-    component: ProfileComponent,
-    canActivate: [authGuard],
-  },
+  { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+  { path: '**', redirectTo: 'login', pathMatch: 'full' },
 ];
