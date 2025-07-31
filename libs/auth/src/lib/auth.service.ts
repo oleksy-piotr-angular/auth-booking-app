@@ -5,16 +5,27 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { tap, map } from 'rxjs/operators';
 import { TokenService } from './token.service';
 import {
+  ForgotPasswordPayload,
+  ForgotPasswordResponseDto,
   LoginPayload,
   LoginResponseDto,
   RegisterPayload,
   RegisterResponseDto,
+  ResetPasswordPayload,
+  ResetPasswordResponseDto,
   UserProfile,
 } from './dtos/auth.dto';
-import { LoginData, RegisterData } from './models/auth.model';
 import {
+  ForgotPasswordData,
+  LoginData,
+  RegisterData,
+  ResetPasswordData,
+} from './models/auth.model';
+import {
+  mapForgotPasswordDtoToData,
   mapLoginDtoToAuthToken,
   mapRegisterDtoToAuthToken,
+  mapResetPasswordDtoToData,
 } from './mappers/auth.mapper';
 import { AUTH_API_BASE } from '@booking-app/tokens';
 
@@ -61,17 +72,26 @@ export class AuthService {
       );
   }
 
-  public forgotPassword(email: string): Observable<unknown> {
-    return this.http.post(`${this.apiBase}/auth/forgot-password`, {
-      email,
-    });
+  public forgotPassword(
+    payload: ForgotPasswordPayload
+  ): Observable<ForgotPasswordData> {
+    return this.http
+      .post<ForgotPasswordResponseDto>(
+        `${this.apiBase}/auth/forgot-password`,
+        payload
+      )
+      .pipe(map(mapForgotPasswordDtoToData));
   }
 
-  public resetPassword(token: string, password: string): Observable<void> {
-    return this.http.post<void>(`${this.apiBase}/auth/reset-password`, {
-      token,
-      password,
-    });
+  public resetPassword(
+    payload: ResetPasswordPayload
+  ): Observable<ResetPasswordData> {
+    return this.http
+      .post<ResetPasswordResponseDto>(
+        `${this.apiBase}/auth/reset-password`,
+        payload
+      )
+      .pipe(map(mapResetPasswordDtoToData));
   }
 
   public getUserId(): number | null {
