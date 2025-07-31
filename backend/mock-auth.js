@@ -115,6 +115,65 @@ app.post('/api/register', (req, res) => {
   });
 });
 
+// ----------------------------------------- 
+// Forgot password: generate & send reset token
+// -----------------------------------------
+app.post('/api/auth/forgot-password', (req, res) => {
+  const { email } = req.body;
+  const db    = loadDb();
+  const user  = db.users.find(u => u.email === email);
+
+  if (!user) {
+    return res.status(404).json({ message: 'Email not found' });
+  }
+
+  // create a short‐lived reset token
+  const resetToken = jwt.sign(
+    { sub: user.id, email: user.email, type: 'reset' },
+    SECRET,
+    { expiresIn: '15m' }
+  );
+
+  // → in a real system would email be sent this link but we just log it here
+  console.log(`[RESET LINK] For ${email}: token=${resetToken}`);
+
+  res.json({ message: 'Reset link sent to your email.' });
+});
+
+// ----------------------------------------- 
+// Reset password: validate token & update password
+// -----------------------------------------
+app.post('/api/auth/reset-password', (req, res) => {
+  const { token, newPassword, confirmPassword } = req.body;
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({ message: 'Passwords do not match' });
+  }
+
+  let payload;
+  try {
+    payload = jwt.verify(token, SECRET);
+    if (payload.type !== 'reset') {
+      throw new Error('Invalid token type');
+    }
+  } catch {
+    return res.status(401).json({ message: 'Invalid or expired token' });
+  }
+
+  const db   = loadDb();
+  const user = db.users.find(u => u.id === payload.sub);
+  if (!user) {
+    return res.status(404).json({ message: 'User not found' });
+  }
+
+  user.password = newPassword;
+  if (ENABLE_PERSISTENCE) {
+    fs.writeFileSync(DB_PATH, JSON.stringify(db, null, 2), 'utf8');
+  }
+
+  res.json({ message: 'Password has been successfully reset.' });
+});
+
 // Start server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
