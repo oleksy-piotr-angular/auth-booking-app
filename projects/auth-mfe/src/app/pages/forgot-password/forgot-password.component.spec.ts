@@ -17,7 +17,7 @@ import {
   provideMockAuthService,
   provideMockRouter,
 } from 'testing/test-helpers';
-import { AuthService } from '@booking-app/auth';
+import { AuthService, ForgotPasswordPayload } from '@booking-app/auth';
 import { FormErrorComponent } from '../../components/form-error/form-error.component';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
@@ -48,7 +48,7 @@ describe('ForgotPasswordComponent', () => {
   let dynamicForm: DynamicFormStubComponent;
   let inFlight$: Subject<any>;
 
-  const validEmail = 'alice@test.com';
+  const validEmail: ForgotPasswordPayload = { email: 'alice@test.com' };
   const successResponse = { message: 'OK' };
 
   beforeEach(async () => {
@@ -110,10 +110,13 @@ describe('ForgotPasswordComponent', () => {
     it('calls AuthService.forgotPassword and navigates to /login on success', fakeAsync(() => {
       authSpy.forgotPassword.and.returnValue(of(successResponse));
 
-      dynamicForm.submitted.emit({ email: validEmail });
+      dynamicForm.submitted.emit(validEmail);
       tick();
 
-      expect(authSpy.forgotPassword).toHaveBeenCalledOnceWith(validEmail);
+      fixture.detectChanges();
+
+      expect(authSpy.forgotPassword).toHaveBeenCalledTimes(1);
+      expect(authSpy.forgotPassword).toHaveBeenCalledWith(validEmail);
       expect(routerSpy.navigate).toHaveBeenCalledWith(['/login']);
     }));
 
