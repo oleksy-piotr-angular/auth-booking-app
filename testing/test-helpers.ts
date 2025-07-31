@@ -21,6 +21,9 @@ export function createAuthServiceSpy() {
   return jasmine.createSpyObj<AuthService>('AuthService', [
     'login',
     'register',
+    'forgotPassword',
+    'resetPassword',
+    'getProfile',
   ]);
 }
 
