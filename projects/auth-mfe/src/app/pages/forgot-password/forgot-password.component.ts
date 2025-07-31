@@ -6,4 +6,8 @@ import { Component } from '@angular/core';
   imports: [],
   template: ` <p>forgot-password works!</p> `,
 })
-export class ForgotPasswordComponent {}
+export class ForgotPasswordComponent {
+  error: any;
+  config: any[] = [];
+  errorMessages: Record<string, string> = {};
+}
