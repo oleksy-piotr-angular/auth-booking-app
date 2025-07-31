@@ -22,3 +22,21 @@ export interface UserProfile {
 }
 
 export interface RegisterResponseDto extends LoginResponseDto {}
+
+export interface ForgotPasswordPayload {
+  email: string;
+}
+
+export interface ForgotPasswordResponseDto {
+  message: string;
+}
+
+export interface ResetPasswordPayload {
+  token: string;
+  newPassword: string;
+  confirmPassword?: string;
+}
+
+export interface ResetPasswordResponseDto {
+  message: string;
+}

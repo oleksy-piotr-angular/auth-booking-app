@@ -5,3 +5,10 @@ export interface LoginData {
 }
 
 export interface RegisterData extends LoginData {}
+
+export interface ForgotPasswordData {
+  message: string;
+}
+export interface ResetPasswordData {
+  message: string;
+}
