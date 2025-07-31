@@ -110,7 +110,7 @@ describe('ForgotPasswordComponent', () => {
     it('calls AuthService.forgotPassword and navigates to /login on success', fakeAsync(() => {
       authSpy.forgotPassword.and.returnValue(of(successResponse));
 
-      dynamicForm.submitted.emit(validEmail);
+      dynamicForm.submitted.emit({ email: validEmail });
       tick();
 
       expect(authSpy.forgotPassword).toHaveBeenCalledOnceWith(validEmail);
