@@ -4,7 +4,7 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 
@@ -21,14 +21,23 @@ import { LoadingSpinnerComponent } from '@booking-app/ui-lib-components';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SharedMaterialModule } from '@booking-app/shared-material';
 import { CommonModule } from '@angular/common';
-//!TODO
 ////////////////////////////////////////////////////////////////////////////////
 // Stub out error & spinner components (standalone or not)
 ////////////////////////////////////////////////////////////////////////////////
-@Component({ selector: 'app-form-error', template: '' })
-class FormErrorStub {}
+@Component({
+  selector: 'app-form-error',
+  template: '',
+  standalone: true,
+})
+class FormErrorStub {
+  @Input() message?: string;
+}
 
-@Component({ selector: 'app-loading-spinner', template: '' })
+@Component({
+  selector: 'app-loading-spinner',
+  template: '',
+  standalone: true,
+})
 class SpinnerStub {}
 
 describe('ProfileComponent', () => {
