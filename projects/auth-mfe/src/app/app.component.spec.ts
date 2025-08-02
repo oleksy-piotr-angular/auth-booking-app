@@ -14,16 +14,10 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'auth-mfe' title`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('auth-mfe');
-  });
-
-  it('should render title', () => {
+  it('should have a router outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, auth-mfe');
+    const outletEl = fixture.nativeElement.querySelector('router-outlet');
+    expect(outletEl).toBeTruthy();
   });
 });
