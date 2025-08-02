@@ -4,12 +4,14 @@ import {
   RegisterResponseDto,
   ForgotPasswordResponseDto,
   ResetPasswordResponseDto,
+  UserProfileDto,
 } from '../dtos/auth.dto';
 import {
   LoginData,
   RegisterData,
   ForgotPasswordData,
   ResetPasswordData,
+  UserProfileData,
 } from '../models/auth.model';
 
 export function mapLoginDtoToAuthToken(dto: LoginResponseDto): LoginData {
@@ -41,5 +43,13 @@ export function mapResetPasswordDtoToData(
 ): ResetPasswordData {
   return {
     message: dto.message,
+  };
+}
+
+export function mapUserProfileDtoToData(dto: UserProfileDto): UserProfileData {
+  return {
+    id: dto.id,
+    name: dto.name,
+    email: dto.email,
   };
 }

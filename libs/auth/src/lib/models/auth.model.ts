@@ -12,3 +12,9 @@ export interface ForgotPasswordData {
 export interface ResetPasswordData {
   message: string;
 }
+
+export interface UserProfileData {
+  id: number;
+  name: string;
+  email: string;
+}

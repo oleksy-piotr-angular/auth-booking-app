@@ -13,19 +13,21 @@ import {
   RegisterResponseDto,
   ResetPasswordPayload,
   ResetPasswordResponseDto,
-  UserProfile,
+  UserProfileDto,
 } from './dtos/auth.dto';
 import {
   ForgotPasswordData,
   LoginData,
   RegisterData,
   ResetPasswordData,
+  UserProfileData,
 } from './models/auth.model';
 import {
   mapForgotPasswordDtoToData,
   mapLoginDtoToAuthToken,
   mapRegisterDtoToAuthToken,
   mapResetPasswordDtoToData,
+  mapUserProfileDtoToData,
 } from './mappers/auth.mapper';
 import { AUTH_API_BASE } from '@booking-app/tokens';
 
@@ -105,11 +107,13 @@ export class AuthService {
     this.authSubject.next(false);
   }
 
-  public getProfile(): Observable<UserProfile> {
-    const raw = localStorage.getItem('user_id');
+  public getProfile(): Observable<UserProfileData> {
+    const raw = this.getUserId();
     if (!raw) {
       throw new Error('User ID not available');
     }
-    return this.http.get<UserProfile>(`${this.apiBase}/users/${raw}`);
+    return this.http
+      .get<UserProfileDto>(`${this.apiBase}/users/${raw}`)
+      .pipe(map(mapUserProfileDtoToData));
   }
 }

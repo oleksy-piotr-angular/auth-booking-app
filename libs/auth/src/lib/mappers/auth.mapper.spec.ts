@@ -5,6 +5,7 @@ import {
   mapRegisterDtoToAuthToken,
   mapForgotPasswordDtoToData,
   mapResetPasswordDtoToData,
+  mapUserProfileDtoToData,
 } from './auth.mapper';
 
 import {
@@ -12,6 +13,7 @@ import {
   RegisterResponseDto,
   ForgotPasswordResponseDto,
   ResetPasswordResponseDto,
+  UserProfileDto,
 } from '../dtos/auth.dto';
 
 import {
@@ -19,6 +21,7 @@ import {
   RegisterData,
   ForgotPasswordData,
   ResetPasswordData,
+  UserProfileData,
 } from '../models/auth.model';
 
 describe('auth.mapper', () => {
@@ -58,5 +61,20 @@ describe('auth.mapper', () => {
 
     const result: ResetPasswordData = mapResetPasswordDtoToData(dto);
     expect(result).toEqual({ message: 'Password has been reset.' });
+  });
+
+  it('should map UserProfileDto to UserProfile', () => {
+    const dto: UserProfileDto = {
+      id: 5,
+      name: 'Alice',
+      email: 'alice@x.com',
+    };
+
+    const result: UserProfileData = mapUserProfileDtoToData(dto);
+    expect(result).toEqual({
+      id: 5,
+      name: 'Alice',
+      email: 'alice@x.com',
+    });
   });
 });

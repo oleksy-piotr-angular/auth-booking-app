@@ -19,7 +19,7 @@ import {
   ForgotPasswordResponseDto,
   ResetPasswordPayload,
   ResetPasswordResponseDto,
-  UserProfile,
+  UserProfileDto,
 } from './dtos/auth.dto';
 
 import {
@@ -27,6 +27,7 @@ import {
   RegisterData,
   ForgotPasswordData,
   ResetPasswordData,
+  UserProfileData,
 } from './models/auth.model';
 
 describe('AuthService (TDD)', () => {
@@ -102,5 +103,40 @@ describe('AuthService (TDD)', () => {
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(payload);
     req.flush(mockResp);
+  });
+
+  describe('getProfile()', () => {
+    const mockDto: UserProfileDto = {
+      id: 123,
+      name: 'Zoe',
+      email: 'zoe@x.com',
+    };
+
+    it('should GET /users/:id and return UserProfileData', (done) => {
+      // Arrange: stash a user ID
+      localStorage.setItem('user_id', '123');
+
+      service.getProfile().subscribe((data: UserProfileData) => {
+        expect(data).toEqual({
+          id: 123,
+          name: 'Zoe',
+          email: 'zoe@x.com',
+        });
+        done();
+      });
+
+      // Act: flush the HTTP mock
+      const req = httpMock.expectOne(`${environment.apiBase}/users/123`);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockDto);
+    });
+
+    it('should throw if no user_id in storage', () => {
+      // Arrange: ensure nothing is in storage
+      localStorage.removeItem('user_id');
+
+      // Act & Assert
+      expect(() => service.getProfile()).toThrowError('User ID not available');
+    });
   });
 });
