@@ -1,22 +1,33 @@
 // projects/_shell-app/src/app/host.routes.ts
 import { Routes } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/module-federation';
-import { unauthGuard } from './guards/unauth/unauth.guard';
 import { authGuard } from './guards/auth/auth.guard';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 export const HOST_ROUTES: Routes = [
-  // Redirect root URL to profile
-  { path: '', redirectTo: 'auth-mfe', pathMatch: 'full' },
-  // Redirect URLs to the micro-URLs of the "auth-mfe" frontend, because this
-  // micro-frontend belongs to it
-  { path: 'profile', redirectTo: 'auth-mfe/profile', pathMatch: 'full' },
+  // Root lands on the login page
+  { path: '', component: HomePageComponent, pathMatch: 'full' },
+
+  // Top-level aliases for auth-related paths
   { path: 'login', redirectTo: 'auth-mfe/login', pathMatch: 'full' },
   { path: 'register', redirectTo: 'auth-mfe/register', pathMatch: 'full' },
+  {
+    path: 'forgot-password',
+    redirectTo: 'auth-mfe/forgot-password',
+    pathMatch: 'full',
+  },
+  {
+    path: 'reset-password',
+    redirectTo: 'auth-mfe/reset-password',
+    pathMatch: 'full',
+  },
+  { path: 'profile', redirectTo: 'auth-mfe/profile', pathMatch: 'full' },
 
   // Public routes Lazy-loaded routes for micro frontends (only for unauthenticated users)
+  // Delegate **all** /auth-mfe/* URLs to Auth MFE
   {
     path: 'auth-mfe',
-    canActivate: [unauthGuard],
     loadChildren: () =>
       loadRemoteModule({
         type: 'module',
@@ -46,4 +57,5 @@ export const HOST_ROUTES: Routes = [
         exposedModule: './searchRoutes',
       }).then((m) => m.SEARCH_ROUTES),
   },
+  { path: '**', component: PageNotFoundComponent },
 ];
