@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import { AUTH_ROUTES } from './auth.routes';
 import { provideHttpClient } from '@angular/common/http';
 import { AUTH_API_BASE } from '@booking-app/tokens';
-import { environment } from '@booking-app/environments/environment.prod';
+import { environment } from '@booking-app/environments/environment';
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
