@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # list of ports you want to free
-ports=(4200 4201 4202)
+ports=(4200 4201 4202 4203)
 
 for port in "${ports[@]}"; do
   # get only the PIDs (-t) on this TCP port
