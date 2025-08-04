@@ -7,6 +7,7 @@ import { ResetPasswordComponent } from './pages/reset-password/reset-password.co
 import { resetTokenGuard } from './guards/reset-token/reset-token.guard';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { authGuard } from './guards/auth/auth.guard';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 export const AUTH_ROUTES: Routes = [
   {
@@ -25,5 +26,5 @@ export const AUTH_ROUTES: Routes = [
     ],
   },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
-  { path: '**', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', component: PageNotFoundComponent },
 ];
