@@ -6,7 +6,7 @@ module.exports = withModuleFederationPlugin({
   filename: 'remoteEntry.js', 
 
   exposes: {
-    '/detailsRoutes': './projects/details-mfe/src/app/details.routes.ts',
+    './detailsRoutes': './projects/details-mfe/src/app/details.routes.ts',
   },
 
   shared: {

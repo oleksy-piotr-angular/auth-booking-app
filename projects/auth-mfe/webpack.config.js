@@ -1,3 +1,4 @@
+//projects/auth-mfe/webpack.config.js
 const { shareAll, withModuleFederationPlugin } = require('@angular-architects/module-federation/webpack');
 
 module.exports = withModuleFederationPlugin({
@@ -6,7 +7,7 @@ module.exports = withModuleFederationPlugin({
   filename: 'remoteEntry.js', 
 
   exposes: {
-    '/authRoutes': './projects/auth-mfe/src/app/auth.routes.ts',
+    './authRoutes': './projects/auth-mfe/src/app/auth.routes.ts',
   },
 
   shared: {
