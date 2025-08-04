@@ -7,6 +7,11 @@ import { authGuard } from './guards/auth/auth.guard';
 export const HOST_ROUTES: Routes = [
   // Redirect root URL to profile
   { path: '', redirectTo: 'auth-mfe', pathMatch: 'full' },
+  // Redirect URLs to the micro-URLs of the "auth-mfe" frontend, because this
+  // micro-frontend belongs to it
+  { path: 'profile', redirectTo: 'auth-mfe/profile', pathMatch: 'full' },
+  { path: 'login', redirectTo: 'auth-mfe/login', pathMatch: 'full' },
+  { path: 'register', redirectTo: 'auth-mfe/register', pathMatch: 'full' },
 
   // Public routes Lazy-loaded routes for micro frontends (only for unauthenticated users)
   {
