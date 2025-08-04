@@ -1,4 +1,4 @@
-.spacer {
+.toolbar-spacer {
   flex: 1 1 auto;
 }
 .active {
@@ -8,4 +8,11 @@
   color: #fff;
   background-color: rgba(255, 255, 255, 0.15);
   border-radius: 4px;
+}
+
+.toolbar-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 48px; /* Vertically center with the toolbar’s height */
 }

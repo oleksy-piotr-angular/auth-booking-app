@@ -12,7 +12,7 @@ import { TokenService } from '@booking-app/auth';
   styleUrls: ['./nav-bar.component.scss'],
 })
 export class NavBarComponent {
-  title = '_shell-app';
+  title = 'Booking App';
   constructor(private tokenService: TokenService, private router: Router) {}
 
   get isAuthenticated(): boolean {
