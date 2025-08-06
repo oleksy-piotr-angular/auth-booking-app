@@ -38,7 +38,7 @@ export const HOST_ROUTES: Routes = [
 
   // Lazy-loaded routes for micro frontends
   {
-    path: 'details-mfe',
+    path: 'details-mfe/:detailId',
     canActivate: [authGuard],
     loadChildren: () =>
       loadRemoteModule({
