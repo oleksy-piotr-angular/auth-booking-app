@@ -1,18 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { PageNotFoundComponent } from './page-not-found.component';
+import { AuthPageNotFoundComponent } from './auth-page-not-found.component';
 
 describe('PageNotFoundComponent', () => {
-  let component: PageNotFoundComponent;
-  let fixture: ComponentFixture<PageNotFoundComponent>;
+  let component: AuthPageNotFoundComponent;
+  let fixture: ComponentFixture<AuthPageNotFoundComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PageNotFoundComponent]
-    })
-    .compileComponents();
-    
-    fixture = TestBed.createComponent(PageNotFoundComponent);
+      imports: [AuthPageNotFoundComponent],
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(AuthPageNotFoundComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
