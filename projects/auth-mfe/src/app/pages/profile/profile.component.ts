@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AuthService, UserProfileData } from '@booking-app/auth';
 import { LoadingSpinnerComponent } from '@booking-app/ui-lib-components';
 import { FormErrorComponent } from '../../components/form-error/form-error.component';
@@ -9,11 +9,9 @@ import { CommonModule } from '@angular/common';
   selector: 'app-profile',
   template: `<app-loading-spinner *ngIf="loading"></app-loading-spinner>
     <app-form-error *ngIf="error" [message]="error"></app-form-error>
-
     <div *ngIf="user" class="profile-details">
       <h2 class="profile-name">{{ user.name }}</h2>
       <p class="profile-email">{{ user.email }}</p>
-      <!-- more fields… -->
     </div>`,
   styles: [],
   standalone: true,
@@ -25,16 +23,17 @@ import { CommonModule } from '@angular/common';
   ],
 })
 export class ProfileComponent implements OnInit {
-  user?: UserProfileData;
-  error?: string;
-  loading = true;
+  public loading = false;
+  public error: string | null = null;
+  public user: UserProfileData | null = null;
 
-  constructor(private auth: AuthService) {}
+  private readonly authService = inject(AuthService);
 
-  ngOnInit() {
-    this.auth.getProfile().subscribe({
-      next: (u) => {
-        this.user = u;
+  public ngOnInit(): void {
+    this.loading = true;
+    this.authService.getProfile().subscribe({
+      next: (user) => {
+        this.user = user;
         this.loading = false;
       },
       error: (err) => {

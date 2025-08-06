@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { DynamicFormComponent } from '../../components/dynamic-form/dynamic-form.component';
 import { FormErrorComponent } from '../../components/form-error/form-error.component';
 import { AuthService, RegisterData, RegisterPayload } from '@booking-app/auth';
@@ -30,26 +30,22 @@ import { LoadingSpinnerComponent } from '@booking-app/ui-lib-components';
         (submitted)="onSubmit($event)"
       ></app-dynamic-form>
       <app-form-error *ngIf="error" [message]="error"></app-form-error>
-
       <app-loading-spinner *ngIf="isLoading" />
     </mat-card>
   `,
   styles: ``,
 })
-export class RegisterComponent {
-  isLoading = false;
+export class RegisterComponent implements OnDestroy {
+  public isLoading = false;
+  public error: string | null = null;
+  public errorMessages: Record<string, string>;
+  public config = REGISTER_FORM_CONFIG;
 
-  error: string | null = null;
-  errorMessages: Record<string, string>;
+  private readonly destroy$ = new Subject<void>();
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
-  private destroy$ = new Subject<void>();
-
-  config = REGISTER_FORM_CONFIG;
-
-  private authService = inject(AuthService);
-  private router = inject(Router);
-
-  constructor() {
+  public constructor() {
     // Collect error messages from the config
     this.errorMessages = this.config.reduce((acc, { errorMessages = {} }) => {
       Object.assign(acc, errorMessages);
@@ -62,7 +58,7 @@ export class RegisterComponent {
     this.isLoading = true;
 
     this.authService
-      .register(<RegisterPayload>formData)
+      .register(formData)
       .pipe(
         takeUntil(this.destroy$),
         take(1),
@@ -78,8 +74,7 @@ export class RegisterComponent {
       });
   }
 
-  ngOnDestroy() {
-    // Emits to all piped takeUntil() calls, then completes the subject
+  public ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }

@@ -10,7 +10,6 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-
 import { DynamicInputComponent } from '../dynamic-input/dynamic-input.component';
 import { passwordsMatchValidator } from '../../Validators/password-match/passwords-match.validator';
 import { FormFieldConfig } from '../../models/field-config.model';
@@ -28,21 +27,21 @@ import { FormFieldConfig } from '../../models/field-config.model';
   styleUrls: ['./dynamic-form.component.scss'],
 })
 export class DynamicFormComponent<T = any> implements OnInit, OnChanges {
-  @Input() config: FormFieldConfig[] = [];
-  @Input() errorMessages: Record<string, string> = {};
-  @Input() submitLabel = 'Submit';
+  @Input() public config: FormFieldConfig[] = [];
+  @Input() public errorMessages: Record<string, string> = {};
+  @Input() public submitLabel = 'Submit';
 
-  @Output() submitted = new EventEmitter<T>();
+  @Output() public submitted = new EventEmitter<T>();
 
   public form!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  public constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
+  public ngOnInit(): void {
     this.buildForm();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  public ngOnChanges(changes: SimpleChanges): void {
     if (changes['config'] && !changes['config'].firstChange) {
       this.buildForm();
     }
@@ -50,7 +49,6 @@ export class DynamicFormComponent<T = any> implements OnInit, OnChanges {
 
   private buildForm(): void {
     const controls: Record<string, any> = {};
-
     this.config.forEach((field) => {
       controls[field.name] = [null, field.validators || []];
     });
