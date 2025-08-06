@@ -74,7 +74,7 @@ describe('NavBarComponent', () => {
       .queryAll(By.directive(RouterLinkStubDirective))
       .map((de) => de.injector.get(RouterLinkStubDirective).linkParams);
     expect(links).toEqual(
-      jasmine.arrayWithExactContents(['auth-mfe/login', 'auth-mfe/register'])
+      jasmine.arrayWithExactContents(['/', '/login', '/register'])
     );
 
     const icons = fixture.debugElement
@@ -94,7 +94,7 @@ describe('NavBarComponent', () => {
       .queryAll(By.directive(RouterLinkStubDirective))
       .map((de) => de.injector.get(RouterLinkStubDirective).linkParams);
     expect(links).toEqual(
-      jasmine.arrayContaining(['auth-mfe/profile', 'search-mfe'])
+      jasmine.arrayContaining(['/', '/profile', '/search-mfe'])
     );
 
     // verify icons: person, search, logout
@@ -102,7 +102,7 @@ describe('NavBarComponent', () => {
       .queryAll(By.css('mat-icon'))
       .map((de) => de.nativeElement.textContent.trim());
     expect(icons).toEqual(
-      jasmine.arrayContaining(['person', 'search', 'logout'])
+      jasmine.arrayContaining(['account_circle', 'search', 'logout'])
     );
   });
 
