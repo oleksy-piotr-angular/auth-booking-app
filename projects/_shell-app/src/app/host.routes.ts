@@ -2,8 +2,8 @@
 import { Routes } from '@angular/router';
 import { loadRemoteModule } from '@angular-architects/module-federation';
 import { authGuard } from './guards/auth/auth.guard';
-import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { HomePageComponent } from './home-page/home-page.component';
+import { HomePageComponent } from './pages/home-page/home-page.component';
+import { PageNotFoundComponent } from './pages/page-not-found/page-not-found.component';
 
 export const HOST_ROUTES: Routes = [
   // Root lands on the login page
