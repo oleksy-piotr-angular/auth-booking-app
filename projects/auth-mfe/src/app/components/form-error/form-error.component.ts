@@ -7,9 +7,9 @@ import { SharedMaterialModule } from '@booking-app/shared-material';
   standalone: true,
   imports: [CommonModule, SharedMaterialModule],
   template: `
-    <ng-container *ngIf="messagesToShow.length > 0">
+    <ng-container *ngIf="displayMessages.length > 0">
       <mat-error
-        *ngFor="let msg of messagesToShow"
+        *ngFor="let msg of displayMessages"
         class="form-error-message"
         role="alert"
       >
@@ -29,4 +29,16 @@ import { SharedMaterialModule } from '@booking-app/shared-material';
 export class FormErrorComponent {
   @Input() public message?: string;
   @Input() public messagesToShow: string[] = [];
+
+  /**
+   * Priority 1: if messagesToShow has entries, return unique ones in insertion order
+   * Priority 2: if message is set, return [message]
+   * Otherwise: return []
+   */
+  public get displayMessages(): string[] {
+    if (this.messagesToShow.length) {
+      return Array.from(new Set(this.messagesToShow));
+    }
+    return this.message ? [this.message] : [];
+  }
 }

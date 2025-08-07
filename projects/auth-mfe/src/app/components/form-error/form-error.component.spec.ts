@@ -24,8 +24,8 @@ describe('FormErrorComponent', () => {
   });
 
   it('renders nothing when message is null and messages is undefined', () => {
-    component.message = null;
-    component.messages = undefined;
+    component.message = undefined;
+    component.messagesToShow = [];
     fixture.detectChanges();
 
     const host = fixture.nativeElement as HTMLElement;
@@ -34,7 +34,7 @@ describe('FormErrorComponent', () => {
 
   it('renders the provided error message', () => {
     component.message = 'Server unavailable';
-    component.messages = undefined;
+    component.messagesToShow = [];
     fixture.detectChanges();
 
     const msgs = fixture.debugElement.queryAll(
@@ -45,8 +45,8 @@ describe('FormErrorComponent', () => {
   });
 
   it('renders multiple error messages when messages input is provided', () => {
-    component.message = null;
-    component.messages = ['Failed to load', 'Timeout'];
+    component.message = undefined;
+    component.messagesToShow = ['Failed to load', 'Timeout'];
     fixture.detectChanges();
 
     const msgs = fixture.debugElement.queryAll(
@@ -60,8 +60,8 @@ describe('FormErrorComponent', () => {
   });
 
   it('deduplicates identical messages before rendering', () => {
-    component.message = null;
-    component.messages = [
+    component.message = undefined;
+    component.messagesToShow = [
       'Error A',
       'Error B',
       'Error A',

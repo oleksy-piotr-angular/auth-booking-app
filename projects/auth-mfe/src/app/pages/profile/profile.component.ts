@@ -24,8 +24,8 @@ import { CommonModule } from '@angular/common';
 })
 export class ProfileComponent implements OnInit {
   public loading = false;
-  public error: string | null = null;
-  public user: UserProfileData | null = null;
+  public error?: string;
+  public user?: UserProfileData;
 
   private readonly authService = inject(AuthService);
 
@@ -34,10 +34,12 @@ export class ProfileComponent implements OnInit {
     this.authService.getProfile().subscribe({
       next: (user) => {
         this.user = user;
+        this.error = undefined;
         this.loading = false;
       },
       error: (err) => {
         this.error = err?.message || 'Failed to load profile';
+        this.user = undefined;
         this.loading = false;
       },
     });
