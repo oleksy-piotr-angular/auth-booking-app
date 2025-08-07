@@ -14,6 +14,11 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:_shell-app": "ng test _shell-app --watch=false --browsers=ChromeHeadless",
+    "test:details-mfe": "ng test details-mfe --watch=false --browsers=ChromeHeadless",
+    "test:search-mfe": "ng test search-mfe --watch=false --browsers=ChromeHeadless",
+    "test:auth-mfe": "ng test auth-mfe --watch=false --browsers=ChromeHeadless",
+    "test:all": "concurrently \"npm run test:_shell-app\" \"npm run test:details-mfe\" \"npm run test:search-mfe\" \"npm run test:auth-mfe\"",
     "run:all": "node node_modules/@angular-architects/module-federation/src/server/mf-dev-server.js",
     "mock-auth": "node backend/mock-auth.js",
     "mock-auth:persist": "cross-env PERSIST_DB=true npm run mock-auth"
