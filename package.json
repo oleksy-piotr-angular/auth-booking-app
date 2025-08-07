@@ -18,7 +18,11 @@
     "test:details-mfe": "ng test details-mfe --watch=false --browsers=ChromeHeadless",
     "test:search-mfe": "ng test search-mfe --watch=false --browsers=ChromeHeadless",
     "test:auth-mfe": "ng test auth-mfe --watch=false --browsers=ChromeHeadless",
-    "test:all": "concurrently \"npm run test:_shell-app\" \"npm run test:details-mfe\" \"npm run test:search-mfe\" \"npm run test:auth-mfe\"",
+    "test:all-apps": "concurrently \"npm run test:_shell-app\" \"npm run test:details-mfe\" \"npm run test:search-mfe\" \"npm run test:auth-mfe\" ",
+    "test:ui-lib-components": "ng test ui-lib-components --watch=false --browsers=ChromeHeadless",
+    "test:auth-lib": "ng test auth-lib --watch=false --browsers=ChromeHeadless",
+    "test:tokens-lib": "ng test tokens-lib --watch=false --browsers=ChromeHeadless",
+    "test:all-libs": "concurrently \"npm run test:ui-lib-components\" \"npm run test:auth-lib\" \"npm run test:tokens-lib\"",
     "run:all": "node node_modules/@angular-architects/module-federation/src/server/mf-dev-server.js",
     "mock-auth": "node backend/mock-auth.js",
     "mock-auth:persist": "cross-env PERSIST_DB=true npm run mock-auth"
